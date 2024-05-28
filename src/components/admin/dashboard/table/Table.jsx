@@ -1,31 +1,34 @@
 import React from "react";
 import { Box, useTheme, Menu, MenuItem, IconButton } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import Header from "../../../common/header";
 import { tokens } from "../../../../theme";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import DeleteIcon from "@mui/icons-material/Delete";
-import UpdateIcon from "@mui/icons-material/Update";
 
-const Table = ({ title, subtitle, rows, columns }) => {
+const Table = ({ rows, columns, actions }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [currentRow, setCurrentRow] = React.useState(null);
 
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = (event, row) => {
     setAnchorEl(event.currentTarget);
+    setCurrentRow(row);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+    setCurrentRow(null);
+  };
+
+  const handleActionClick = (action) => {
+    action.onClick(currentRow);
+    handleMenuClose();
   };
 
   return (
     <Box m="20px">
-      <Header title={title} subtitle={subtitle} />
       <Box
-        m="40px 0 0 0"
-        height="75vh"
+        height="65vh"
         sx={{
           "& .MuiDataGrid-root": {
             border: "none",
@@ -55,14 +58,14 @@ const Table = ({ title, subtitle, rows, columns }) => {
             ...columns,
             {
               field: "acciones",
-              headerName: "acciones",
+              headerName: "Acciones",
               flex: 0.5,
               renderCell: ({ row }) => (
                 <IconButton
                   aria-label="actions"
                   aria-controls="actions-menu"
                   aria-haspopup="true"
-                  onClick={handleMenuOpen}
+                  onClick={(event) => handleMenuOpen(event, row)}
                 >
                   <MoreVertIcon />
                 </IconButton>
@@ -81,12 +84,12 @@ const Table = ({ title, subtitle, rows, columns }) => {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem>
-          <DeleteIcon sx={{ marginRight: 1 }}/> Eliminar
-        </MenuItem>
-        <MenuItem>
-          <UpdateIcon sx={{ marginRight: 1 }}/> Actualizar
-        </MenuItem>
+        {actions.map((action, index) => (
+          <MenuItem key={index} onClick={() => handleActionClick(action)}>
+            {React.cloneElement(action.icon, { sx: { marginRight: 1 } })}
+            {action.name}
+          </MenuItem>
+        ))}
       </Menu>
     </Box>
   );

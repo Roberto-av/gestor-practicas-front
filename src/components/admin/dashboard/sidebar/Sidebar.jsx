@@ -7,8 +7,8 @@ import { tokens } from "../../../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import Groups2OutlinedIcon from '@mui/icons-material/Groups2Outlined';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -52,6 +52,7 @@ const Sidebar = () => {
         "& .pro-menu-item.active": {
           color: "#6870fa !important",
         },
+        height:"100hv"
       }}
     >
       <ProSidebar collapsed={isCollapsed}>
@@ -134,7 +135,7 @@ const Sidebar = () => {
             />
             <Item
               title="Todos"
-              to="/admin/dashboard/contacts"
+              to="/admin/dashboard/students"
               icon={<ContactsOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
@@ -145,12 +146,12 @@ const Sidebar = () => {
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >
-              Pages
+              Grupos
             </Typography>
             <Item
-              title="Profile Form"
-              to="/admin/dashboard/form"
-              icon={<PersonOutlinedIcon />}
+              title="Lista"
+              to="/admin/dashboard/groups"
+              icon={<Groups2OutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
