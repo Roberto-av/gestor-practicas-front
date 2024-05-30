@@ -9,6 +9,7 @@ import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import Groups2OutlinedIcon from '@mui/icons-material/Groups2Outlined';
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -152,6 +153,13 @@ const Sidebar = () => {
               title="Lista"
               to="/admin/dashboard/groups"
               icon={<Groups2OutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Instituciones"
+              to="/admin/dashboard/institutions"
+              icon={<BusinessOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />

@@ -16,9 +16,9 @@ const AdminLayout = () => {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <div className="app">
-          <Sidebar isSidebar={isSidebar} /> 
-          <main className="content">
+        <div className="app" style={{ display: 'flex', height: '100vh' }}>
+          <Sidebar isSidebar={isSidebar} style={{ flex: '0 0 240px' }}/>
+          <main className="content" style={{ flex: '1', overflowY: 'auto' }}>
             <Topbar setIsSidebar={setIsSidebar} /> 
             <Outlet /> 
           </main>
