@@ -7,6 +7,8 @@ import Header from "../../../../components/common/header";
 import CustomButton from "../../../../components/common/buttton";
 import AddIcon from "@mui/icons-material/Add";
 import AddStudentModal from "../../../../components/admin/dashboard/students/AddStudentModal";
+import UpdateStudentModal from "../../../../components/admin/dashboard/students/update";
+import ConfirmDeleteModal from "../../../../components/admin/dashboard/students/delete/ConfirmDeleteModal";
 import { Snackbar } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
@@ -17,7 +19,11 @@ const Students = () => {
   const [loading, setLoading] = useState(true);
   const [students, setStudents] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
+  const [currentStudent, setCurrentStudent] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+  const [studentToDelete, setStudentToDelete] = useState(null);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -41,6 +47,31 @@ const Students = () => {
     setIsModalOpen(false);
   };
 
+  const handleOpenUpdateModal = async (studentId) => {
+    try {
+      const response = await api.get(`/api/students/${studentId}`);
+      setCurrentStudent(response.data);
+      setIsUpdateModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching student details:", error);
+    }
+  };
+
+  const handleCloseUpdateModal = () => {
+    setIsUpdateModalOpen(false);
+    setCurrentStudent(null);
+  };
+
+  const handleOpenConfirmDeleteModal = (student) => {
+    setStudentToDelete(student);
+    setIsConfirmDeleteModalOpen(true);
+  };
+
+  const handleCloseConfirmDeleteModal = () => {
+    setIsConfirmDeleteModalOpen(false);
+    setStudentToDelete(null);
+  };
+
   const handleSuccessMessage = (message, newStudent) => {
     setSuccessMessage(message);
     setStudents((prevStudents) => [...prevStudents, newStudent]);
@@ -49,27 +80,50 @@ const Students = () => {
     }, 10000);
   };
 
-  const handleDeleteGroup = (groupId) => {
-    console.log(`Eliminar grupo con ID: ${groupId}`);
+  const handleUpdateSuccessMessage = (message, updatedStudent) => {
+    setSuccessMessage(message);
+    setStudents((prevStudents) =>
+      prevStudents.map((student) =>
+        student.id === updatedStudent.id ? updatedStudent : student
+      )
+    );
+    setTimeout(() => {
+      setSuccessMessage("");
+    }, 10000);
   };
 
-  const handleUpdateGroup = (groupId) => {
-    console.log(`Actualizar grupo con ID: ${groupId}`);
+  const handleDeleteStudent = async () => {
+    if (!studentToDelete) return;
+
+    try {
+      await api.delete(`/api/students/${studentToDelete.id}`);
+      setStudents((prevStudents) =>
+        prevStudents.filter((student) => student.id !== studentToDelete.id)
+      );
+      setSuccessMessage(`Estudiante ${studentToDelete.name} eliminado con éxito`);
+      handleCloseConfirmDeleteModal();
+    } catch (error) {
+      console.error("Error deleting student:", error);
+      setSuccessMessage(`Error al eliminar el estudiante ${studentToDelete.name}`);
+    }
+  };
+
+  const handleUpdateStudent = (studentId) => {
+    handleOpenUpdateModal(studentId);
   };
 
   const actions = [
     {
       name: "Eliminar",
       icon: <DeleteIcon />,
-      onClick: (row) => handleDeleteGroup(row.id),
+      onClick: (row) => handleOpenConfirmDeleteModal(row),
     },
     {
       name: "Actualizar",
       icon: <UpdateIcon />,
-      onClick: (row) => handleUpdateGroup(row.id),
+      onClick: (row) => handleUpdateStudent(row.id),
     },
   ];
-
 
   const columns = [
     { field: "id", headerName: "ID" },
@@ -111,6 +165,18 @@ const Students = () => {
             open={isModalOpen}
             onClose={handleCloseModal}
             onSuccess={handleSuccessMessage}
+          />
+          <UpdateStudentModal
+            open={isUpdateModalOpen}
+            onClose={handleCloseUpdateModal}
+            onSuccess={handleUpdateSuccessMessage}
+            student={currentStudent}
+          />
+          <ConfirmDeleteModal
+            open={isConfirmDeleteModalOpen}
+            onClose={handleCloseConfirmDeleteModal}
+            onConfirm={handleDeleteStudent}
+            studentName={studentToDelete?.name}
           />
           {successMessage && (
             <Snackbar
