@@ -9,8 +9,9 @@ import AddIcon from "@mui/icons-material/Add";
 import InviteIcon from "@mui/icons-material/PersonAdd";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
-import AddGroupModal from "../../../../components/admin/dashboard/groups/AddGroupModal";
+import CommonModal from "../../../../components/admin/dashboard/groups/CommonModal";
 import InviteStudentModal from "../../../../components/admin/dashboard/groups/inviteStudents/InviteStudentModal";
+import ConfirmDeleteModal from "../../../../components/admin/dashboard/students/delete/ConfirmDeleteModal";
 import { tokens } from "../../../../theme";
 
 const Groups = () => {
@@ -23,6 +24,9 @@ const Groups = () => {
   const [isAddGroupModalOpen, setIsAddGroupModalOpen] = useState(false);
   const [isInviteStudentModalOpen, setIsInviteStudentModalOpen] =
     useState(false);
+  const [isUpdateGroupModalOpen, setIsUpdateGroupModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState(null);
   const [selectedGroupId, setSelectedGroupId] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -58,19 +62,52 @@ const Groups = () => {
     setSelectedGroupId(null);
   };
 
-  const handleSuccessMessage = (message) => {
+  const handleSuccessMessage = (message, newGroup) => {
     setSuccessMessage(message);
+    if (newGroup) {
+      setGroups((prevGroups) => [...prevGroups, newGroup]);
+    }
+    setTimeout(() => {
+      setSuccessMessage("");
+    }, 10000);
+  };
+
+  const handleUpdateGroupSuccess = (message, updatedGroup) => {
+    setSuccessMessage(message);
+    setGroups((prevGroups) =>
+      prevGroups.map((group) =>
+        group.id === updatedGroup.id ? updatedGroup : group
+      )
+    );
     setTimeout(() => {
       setSuccessMessage("");
     }, 10000);
   };
 
   const handleDeleteGroup = (groupId) => {
-    console.log(`Eliminar grupo con ID: ${groupId}`);
+    setSelectedGroup(groupId);
+    setIsDeleteModalOpen(true);
   };
 
-  const handleUpdateGroup = (groupId) => {
-    console.log(`Actualizar grupo con ID: ${groupId}`);
+  const handleConfirmDelete = async () => {
+    try {
+      await api.delete(`/api/groups/delete/${selectedGroup}`);
+      setGroups(groups.filter((group) => group.id !== selectedGroup));
+      handleSuccessMessage("Grupo eliminado con éxito");
+      setIsDeleteModalOpen(false);
+    } catch (error) {
+      console.error("Error deleting group:", error);
+    }
+  };
+
+  const handleUpdateGroup = (group) => {
+    setSelectedGroup(group);
+    setIsUpdateGroupModalOpen(true);
+  };
+
+  const handleCloseUpdateGroupModal = () => {
+    setIsUpdateGroupModalOpen(false);
+    setSelectedGroup(null);
   };
 
   const columns = [
@@ -93,14 +130,21 @@ const Groups = () => {
     {
       name: "Actualizar",
       icon: <UpdateIcon />,
-      onClick: (row) => handleUpdateGroup(row.id),
+      onClick: (row) => handleUpdateGroup(row),
     },
   ];
 
   return (
     <div>
       {loading ? (
-        <Loader />
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="80vh"
+        >
+          <Loader />
+        </Box>
       ) : (
         <>
           <Header title={title} subtitle={subtitle} />
@@ -121,10 +165,10 @@ const Groups = () => {
             />
           </Box>
           <Table rows={groups} columns={columns} actions={actions} />
-          <AddGroupModal
+          <CommonModal
             open={isAddGroupModalOpen}
             onClose={handleCloseAddGroupModal}
-            onSuccess={handleSuccessMessage}
+            onSuccess={(message, newGroup) => handleSuccessMessage(message, newGroup)}
           />
           <InviteStudentModal
             open={isInviteStudentModalOpen}
@@ -132,6 +176,21 @@ const Groups = () => {
             groupId={selectedGroupId}
             onSuccess={handleSuccessMessage}
           />
+          <ConfirmDeleteModal
+            open={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            onConfirm={handleConfirmDelete}
+            name={selectedGroup ? selectedGroup.name : ""}
+            customText="el grupo"
+          />
+          {selectedGroup && (
+            <CommonModal
+              open={isUpdateGroupModalOpen}
+              onClose={handleCloseUpdateGroupModal}
+              onSuccess={(message, updatedGroup) => handleUpdateGroupSuccess(message, updatedGroup)}
+              group={selectedGroup}
+            />
+          )}
           {successMessage && (
             <Snackbar
               open={true}

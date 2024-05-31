@@ -1,2 +1,2 @@
-import AddGroupModal from "./AddGroupModal";
-export default AddGroupModal;
+import CommonModal from "./CommonModal";
+export default CommonModal;

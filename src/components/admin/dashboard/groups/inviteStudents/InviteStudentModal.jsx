@@ -86,12 +86,12 @@ const InviteStudentModal = ({ open, onClose, groupId, onSuccess }) => {
           Invitar Alumnos
         </Typography>
       </DialogTitle>
-      <DialogContent style={{ backgroundColor: colors.primary[400], color: colors.grey[100] }}>
+      <DialogContent style={{ backgroundColor: colors.primary[400], color: colors.grey[100]}}>
         {loading ? (
-          <Loader /> // Usa tu componente Loader aquí
+          <Loader />
         ) : (
             <>
-            <FormControl fullWidth error={selectError}>
+            <FormControl fullWidth error={selectError} style={{ marginTop: "10px" }}>
               <Autocomplete 
                 multiple
                 id="students-search"

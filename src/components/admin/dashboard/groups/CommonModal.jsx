@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -10,10 +10,10 @@ import {
   Grid,
 } from "@mui/material";
 import { tokens } from "../../../../theme";
-import CustomTextField from "../../dashboard/textField";
+import CustomTextField from "../textField";
 import api from "../../../../utils/api";
 
-const AddGroupModal = ({ open, onClose, onSuccess }) => {
+const CommonModal = ({ open, onClose, onSuccess, group }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -23,6 +23,12 @@ const AddGroupModal = ({ open, onClose, onSuccess }) => {
   };
 
   const [formData, setFormData] = useState(initialFormData);
+
+  useEffect(() => {
+    if (group) {
+      setFormData(group);
+    }
+  }, [group]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,13 +40,19 @@ const AddGroupModal = ({ open, onClose, onSuccess }) => {
 
   const handleSubmit = async () => {
     try {
-      const response = await api.post("/api/groups/create", formData);
+      const response = group
+        ? await api.put(`/api/groups/update`, formData)
+        : await api.post("/api/groups/create", formData);
 
       if (response.status !== 200) {
         throw new Error("Failed to save group data");
       }
 
-      onSuccess("Grupo creado con éxito", response.data);
+      const savedGroup = response.data;
+      onSuccess(
+        group ? "Grupo actualizado con éxito" : "Grupo creado con éxito",
+        savedGroup
+      );
       setFormData(initialFormData);
       onClose();
     } catch (error) {
@@ -53,7 +65,7 @@ const AddGroupModal = ({ open, onClose, onSuccess }) => {
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle style={{ backgroundColor: colors.blueAccent[600], color: colors.grey[100] }}>
         <Typography variant="h3" color={colors.grey[100]}>
-          Agregar Grupo
+          {group ? "Actualizar Grupo" : "Agregar Grupo"}
         </Typography>
       </DialogTitle>
       <DialogContent style={{ backgroundColor: colors.primary[400], color: colors.grey[100] }}>
@@ -99,4 +111,4 @@ const AddGroupModal = ({ open, onClose, onSuccess }) => {
   );
 };
 
-export default AddGroupModal;
+export default CommonModal;
