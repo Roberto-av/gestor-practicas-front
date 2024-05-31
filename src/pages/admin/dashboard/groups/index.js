@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Snackbar, Box, useTheme } from "@mui/material";
 import Table from "../../../../components/admin/dashboard/table";
 import api from "../../../../utils/api";
 import Loader from "../../../../components/admin/dashboard/loader";
@@ -10,15 +11,18 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
 import AddGroupModal from "../../../../components/admin/dashboard/groups/AddGroupModal";
 import InviteStudentModal from "../../../../components/admin/dashboard/groups/inviteStudents/InviteStudentModal";
-import { Snackbar } from "@mui/material";
+import { tokens } from "../../../../theme";
 
 const Groups = () => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   const title = "Grupos";
   const subtitle = "Gestionar los grupos";
   const [loading, setLoading] = useState(true);
   const [groups, setGroups] = useState([]);
   const [isAddGroupModalOpen, setIsAddGroupModalOpen] = useState(false);
-  const [isInviteStudentModalOpen, setIsInviteStudentModalOpen] = useState(false);
+  const [isInviteStudentModalOpen, setIsInviteStudentModalOpen] =
+    useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -100,9 +104,28 @@ const Groups = () => {
       ) : (
         <>
           <Header title={title} subtitle={subtitle} />
-          <CustomButton text="Agregar" icon={<AddIcon />} onClick={handleOpenAddGroupModal} />
+          <Box
+            mb="30px"
+            m="20px"
+            display="flex"
+            flexDirection="row"
+            justifyContent="flex-end"
+            p={2}
+          >
+            <CustomButton
+              text="Agregar"
+              icon={<AddIcon />}
+              onClick={handleOpenAddGroupModal}
+              customColor={colors.greenAccent[600]}
+              hoverColor={colors.greenAccent[700]}
+            />
+          </Box>
           <Table rows={groups} columns={columns} actions={actions} />
-          <AddGroupModal open={isAddGroupModalOpen} onClose={handleCloseAddGroupModal} onSuccess={handleSuccessMessage} />
+          <AddGroupModal
+            open={isAddGroupModalOpen}
+            onClose={handleCloseAddGroupModal}
+            onSuccess={handleSuccessMessage}
+          />
           <InviteStudentModal
             open={isInviteStudentModalOpen}
             onClose={handleCloseInviteStudentModal}

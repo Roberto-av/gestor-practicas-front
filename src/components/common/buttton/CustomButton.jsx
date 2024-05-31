@@ -1,25 +1,23 @@
 import React from "react";
 import Button from "@mui/material/Button";
-import { Box } from "@mui/material";
 
-const CustomButton = ({ text, icon, onClick }) => {
+const CustomButton = ({ text, icon, onClick, customColor, hoverColor  }) => {
     return (
-      <Box
-        mb="30px"
-        m="20px"
-        display="flex"
-        justifyContent="flex-end"
-        p={2}
-      >
         <Button
           variant="contained"
-          color="secondary"
+          sx={{
+            backgroundColor: customColor,
+            color: '#fff',
+            '&:hover': {
+              backgroundColor: hoverColor,
+            },
+            margin: '0 10px',
+          }}
           onClick={onClick}
           startIcon={icon}
         >
           {text}
         </Button>
-      </Box>
     );
   };
   

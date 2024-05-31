@@ -9,18 +9,22 @@ import AddIcon from "@mui/icons-material/Add";
 import AddStudentModal from "../../../../components/admin/dashboard/students/AddStudentModal";
 import UpdateStudentModal from "../../../../components/admin/dashboard/students/update";
 import ConfirmDeleteModal from "../../../../components/admin/dashboard/students/delete/ConfirmDeleteModal";
-import { Snackbar } from "@mui/material";
+import { Snackbar, Box, useTheme } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
+import { tokens } from "../../../../theme";
 
 const Students = () => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   const title = "Estudiantes";
   const subtitle = "Gestionar a los estudiantes";
   const [loading, setLoading] = useState(true);
   const [students, setStudents] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
+  const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] =
+    useState(false);
   const [currentStudent, setCurrentStudent] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [studentToDelete, setStudentToDelete] = useState(null);
@@ -100,11 +104,15 @@ const Students = () => {
       setStudents((prevStudents) =>
         prevStudents.filter((student) => student.id !== studentToDelete.id)
       );
-      setSuccessMessage(`Estudiante ${studentToDelete.name} eliminado con éxito`);
+      setSuccessMessage(
+        `Estudiante ${studentToDelete.name} eliminado con éxito`
+      );
       handleCloseConfirmDeleteModal();
     } catch (error) {
       console.error("Error deleting student:", error);
-      setSuccessMessage(`Error al eliminar el estudiante ${studentToDelete.name}`);
+      setSuccessMessage(
+        `Error al eliminar el estudiante ${studentToDelete.name}`
+      );
     }
   };
 
@@ -155,11 +163,22 @@ const Students = () => {
       ) : (
         <>
           <Header title={title} subtitle={subtitle} />
-          <CustomButton
-            text="Agregar"
-            icon={<AddIcon />}
-            onClick={handleOpenModal}
-          />
+          <Box
+            mb="30px"
+            m="20px"
+            display="flex"
+            flexDirection="row"
+            justifyContent="flex-end"
+            p={2}
+          >
+            <CustomButton
+              text="Agregar"
+              icon={<AddIcon />}
+              onClick={handleOpenModal}
+              customColor={colors.greenAccent[600]}
+              hoverColor={colors.greenAccent[700]}
+            />
+          </Box>
           <Table rows={students} columns={columns} actions={actions} />
           <AddStudentModal
             open={isModalOpen}
@@ -176,7 +195,8 @@ const Students = () => {
             open={isConfirmDeleteModalOpen}
             onClose={handleCloseConfirmDeleteModal}
             onConfirm={handleDeleteStudent}
-            studentName={studentToDelete?.name}
+            customText="al estudiante"
+            name={studentToDelete?.name}
           />
           {successMessage && (
             <Snackbar
