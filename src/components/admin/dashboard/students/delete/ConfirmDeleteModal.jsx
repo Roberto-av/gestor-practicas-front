@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { tokens } from "../../../../../theme";
 
-const ConfirmDeleteModal = ({ open, onClose, onConfirm, studentName }) => {
+const ConfirmDeleteModal = ({ open, onClose, onConfirm, name, customText }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -34,7 +34,7 @@ const ConfirmDeleteModal = ({ open, onClose, onConfirm, studentName }) => {
         }}
       >
         <Typography variant="h6" color={colors.grey[100]}>
-          ¿Estás seguro de que deseas eliminar al estudiante {studentName}?
+          ¿Estás seguro de que deseas eliminar {customText} {name}?
         </Typography>
       </DialogContent>
       <DialogActions
