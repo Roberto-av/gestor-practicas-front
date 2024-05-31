@@ -8,7 +8,7 @@ import { AuthProvider } from "./context/AuthContext";
 import Login from "./pages/common/login";
 import PrivateRoute from "./components/common/auth/PrivateRoute";
 import Groups from "./pages/admin/dashboard/groups";
-import GroupDetails from "./pages/admin/dashboard/groups/details";
+//import GroupDetails from "./pages/admin/dashboard/groups/details";
 import StudentRegistrationPage from "./pages/student/auth/StudentRegistrationPage";
 import InstitutionsPage from "./pages/admin/dashboard/institutions";
 import InstitutionDetailPage from "./pages/admin/dashboard/institutions/details";
@@ -22,7 +22,6 @@ const App = () => {
             <Route path="/admin/dashboard" element={<AdminLayout />}>
               <Route path="students" element={<Students />} />
               <Route path="groups" element={<Groups />} />
-              <Route path="group/:id" element={<GroupDetails />} />
               <Route path="institutions" element={<InstitutionsPage />} />
               <Route path="institutions/:id" element={<InstitutionDetailPage />} />
               <Route path="" element={<Home />} />
