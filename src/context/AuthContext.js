@@ -20,19 +20,19 @@ const AuthProvider = ({ children }) => {
           setAuthState((prevState) => ({
             ...prevState,
             user: decodedToken,
-            authorities: decodedToken.authorities // Agrega las autoridades al estado de autenticación
+            authorities: decodedToken.authorities
           }));
         }
       } catch (error) {
         console.error('Error decoding token:', error);
-        logout(); // Logout en caso de error de decodificación
+        logout();
       }
     }
   }, [authState.token]);
 
   const logout = () => {
     localStorage.removeItem('token');
-    setAuthState({ token: null, user: null, authorities: null }); // Limpia las autoridades al hacer logout
+    setAuthState({ token: null, user: null, authorities: null });
   };
 
   return (
