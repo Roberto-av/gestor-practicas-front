@@ -9,14 +9,17 @@ import AddIcon from "@mui/icons-material/Add";
 import InviteIcon from "@mui/icons-material/PersonAdd";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import CommonModal from "../../../../components/admin/dashboard/groups/CommonModal";
 import InviteStudentModal from "../../../../components/admin/dashboard/groups/inviteStudents/InviteStudentModal";
 import ConfirmDeleteModal from "../../../../components/admin/dashboard/students/delete/ConfirmDeleteModal";
 import { tokens } from "../../../../theme";
+import { useNavigate } from "react-router-dom";
 
 const Groups = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const navigate = useNavigate();
   const title = "Grupos";
   const subtitle = "Gestionar los grupos";
   const [loading, setLoading] = useState(true);
@@ -35,6 +38,7 @@ const Groups = () => {
       try {
         const response = await api.get("/api/groups/find-all");
         setGroups(response.data);
+        console.log("datos", response.data.tasks);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching groups:", error);
@@ -110,6 +114,10 @@ const Groups = () => {
     setSelectedGroup(null);
   };
 
+  const handleGroupDetails = (groupId) => {
+    navigate(`/admin/dashboard/group/${groupId}`);
+  };
+
   const columns = [
     { field: "id", headerName: "ID" },
     { field: "name", headerName: "Nombre del Grupo", flex: 1 },
@@ -123,14 +131,19 @@ const Groups = () => {
       onClick: (row) => handleOpenInviteStudentModal(row.id),
     },
     {
-      name: "Eliminar",
-      icon: <DeleteIcon />,
-      onClick: (row) => handleDeleteGroup(row.id),
+      name: "Ver tareas",
+      icon: <AssignmentOutlinedIcon />,
+      onClick: (row) => handleGroupDetails(row.id),
     },
     {
       name: "Actualizar",
       icon: <UpdateIcon />,
       onClick: (row) => handleUpdateGroup(row),
+    },
+    {
+      name: "Eliminar",
+      icon: <DeleteIcon />,
+      onClick: (row) => handleDeleteGroup(row.id),
     },
   ];
 
@@ -168,7 +181,9 @@ const Groups = () => {
           <CommonModal
             open={isAddGroupModalOpen}
             onClose={handleCloseAddGroupModal}
-            onSuccess={(message, newGroup) => handleSuccessMessage(message, newGroup)}
+            onSuccess={(message, newGroup) =>
+              handleSuccessMessage(message, newGroup)
+            }
           />
           <InviteStudentModal
             open={isInviteStudentModalOpen}
@@ -187,7 +202,9 @@ const Groups = () => {
             <CommonModal
               open={isUpdateGroupModalOpen}
               onClose={handleCloseUpdateGroupModal}
-              onSuccess={(message, updatedGroup) => handleUpdateGroupSuccess(message, updatedGroup)}
+              onSuccess={(message, updatedGroup) =>
+                handleUpdateGroupSuccess(message, updatedGroup)
+              }
               group={selectedGroup}
             />
           )}
