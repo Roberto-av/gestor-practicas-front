@@ -28,12 +28,18 @@ const Students = () => {
   const [currentStudent, setCurrentStudent] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [studentToDelete, setStudentToDelete] = useState(null);
+  const [serverError, setServerError] = useState("");
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
         const response = await api.get("/api/students/get-all");
         setStudents(response.data);
+        const studentsWithGroupName = response.data.map(student => ({
+          ...student,
+          groupName: student.group ? student.group.name : ''
+        }));
+        setStudents(studentsWithGroupName);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching students:", error);
@@ -57,7 +63,23 @@ const Students = () => {
       setCurrentStudent(response.data);
       setIsUpdateModalOpen(true);
     } catch (error) {
-      console.error("Error fetching student details:", error);
+      console.error("Error al actualizar al estudiante:", error);
+      if (error.response && error.response.data) {
+        const serverErrors = error.response.data || "Error desconocido";
+        setServerError(serverErrors);
+        setSuccessMessage(
+          `Error: ${serverErrors}`
+        );
+      } else {
+        setServerError(
+          "Error al tratar de obtener al estudiante."
+        );
+        setSuccessMessage(
+          `${serverError}`
+        );
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -141,7 +163,7 @@ const Students = () => {
     { field: "program", headerName: "Carrera", flex: 1 },
     { field: "semester", headerName: "Semestre" },
     { field: "shift", headerName: "Turno" },
-    { field: "groupId", headerName: "Grupo" },
+    { field: "groupName", headerName: "Grupo" },
     {
       field: "createdAt",
       headerName: "Fecha de creación",
@@ -159,7 +181,14 @@ const Students = () => {
   return (
     <div>
       {loading ? (
-        <Loader />
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="80vh"
+        >
+          <Loader />
+        </Box>
       ) : (
         <>
           <Header title={title} subtitle={subtitle} />

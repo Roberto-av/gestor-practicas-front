@@ -8,17 +8,23 @@ import {
   useTheme,
   Typography,
   Grid,
+  Box,
 } from "@mui/material";
 import { tokens } from "../../../../../theme";
 import CustomTextField from "../../textField";
 import api from "../../../../../utils/api";
 import Validation from "../../../../../utils/validations/Validation";
+import Loader from "../../loader";
+import CustomSelect from "../../Select/CustomSelect";
+import {
+  shiftOptions,
+  semesterOptions,
+} from "../../../../../utils/variables/options";
 
 const AddStudentModal = ({ open, onClose, onSuccess }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  // Valores iniciales del formulario
   const initialFormData = {
     controlNumber: "",
     name: "",
@@ -31,6 +37,8 @@ const AddStudentModal = ({ open, onClose, onSuccess }) => {
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [serverError, setServerError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const validate = () => {
     let tempErrors = {};
@@ -61,7 +69,6 @@ const AddStudentModal = ({ open, onClose, onSuccess }) => {
       [name]: value,
     }));
 
-    // Validar el campo específico al cambiar
     if (isSubmitted) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -92,6 +99,7 @@ const AddStudentModal = ({ open, onClose, onSuccess }) => {
   const handleSubmit = async () => {
     setIsSubmitted(true);
     if (validate()) {
+      setLoading(true);
       try {
         const response = await api.post("/api/students/create", formData);
 
@@ -100,21 +108,40 @@ const AddStudentModal = ({ open, onClose, onSuccess }) => {
         }
         const newStudent = response.data;
 
-        onSuccess("Estudiante creado con éxito" , newStudent);
+        onSuccess("Estudiante creado con éxito", newStudent);
+        handleReset();
         onClose();
-        setFormData(initialFormData);
-        setIsSubmitted(false);
       } catch (error) {
         console.error("Error al guardar el estudiante:", error);
-        alert(
-          "Error al guardar el estudiante. Por favor, inténtalo de nuevo más tarde."
-        );
+        if (error.response && error.response.data) {
+          const serverErrors = error.response.data || "Error desconocido";
+          setServerError(serverErrors);
+        } else {
+          setServerError(
+            "Error al guardar el estudiante. Por favor, inténtalo de nuevo más tarde."
+          );
+        }
+      } finally {
+        setLoading(false);
       }
     }
   };
 
+  const handleReset = () => {
+    setFormData(initialFormData);
+    setErrors({});
+    setIsSubmitted(false);
+    setServerError("");
+    setLoading(false);
+  };
+
+  const handleClose = () => {
+    handleReset();
+    onClose();
+  };
+
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle
         style={{
           backgroundColor: colors.primary[400],
@@ -131,74 +158,95 @@ const AddStudentModal = ({ open, onClose, onSuccess }) => {
           color: colors.grey[100],
         }}
       >
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <CustomTextField
-              label="Numero de control *"
-              name="controlNumber"
-              value={formData.controlNumber}
-              onChange={handleChange}
-              error={isSubmitted && !!errors.controlNumber}
-              helperText={isSubmitted && errors.controlNumber}
-            />
+        {loading ? (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="200px"
+          >
+            <Loader />
+          </Box>
+        ) : serverError ? (
+          <Typography
+            color="error"
+            variant="body1"
+            style={{ marginTop: 10, textAlign: "center" }}
+          >
+            {serverError}
+          </Typography>
+        ) : (
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <CustomTextField
+                label="Numero de control *"
+                name="controlNumber"
+                value={formData.controlNumber}
+                onChange={handleChange}
+                error={isSubmitted && !!errors.controlNumber}
+                helperText={isSubmitted && errors.controlNumber}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <CustomTextField
+                label="Nombre *"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                error={isSubmitted && !!errors.name}
+                helperText={isSubmitted && errors.name}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomTextField
+                label="Email *"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                error={isSubmitted && !!errors.email}
+                helperText={isSubmitted && errors.email}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <CustomTextField
+                label="Carrera *"
+                name="program"
+                value={formData.program}
+                onChange={handleChange}
+                error={isSubmitted && !!errors.program}
+                helperText={isSubmitted && errors.program}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <CustomSelect
+                label="Semestre *"
+                name="semester"
+                value={formData.semester}
+                options={semesterOptions}
+                onChange={handleChange}
+                error={isSubmitted && !!errors.semester}
+                formHelperText={isSubmitted && errors.semester}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <CustomSelect
+                label="Turno *"
+                name="shift"
+                value={formData.shift}
+                options={shiftOptions}
+                onChange={handleChange}
+                error={isSubmitted && !!errors.shift}
+                formHelperText={isSubmitted && errors.shift}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <CustomTextField
-              label="Nombre *"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              error={isSubmitted && !!errors.name}
-              helperText={isSubmitted && errors.name}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <CustomTextField
-              label="Email *"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              error={isSubmitted && !!errors.email}
-              helperText={isSubmitted && errors.email}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              label="Carrera *"
-              name="program"
-              value={formData.program}
-              onChange={handleChange}
-              error={isSubmitted && !!errors.program}
-              helperText={isSubmitted && errors.program}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              label="Semestre *"
-              name="semester"
-              value={formData.semester}
-              onChange={handleChange}
-              error={isSubmitted && !!errors.semester}
-              helperText={isSubmitted && errors.semester}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <CustomTextField
-              label="Turno *"
-              name="shift"
-              value={formData.shift}
-              onChange={handleChange}
-              error={isSubmitted && !!errors.shift}
-              helperText={isSubmitted && errors.shift}
-            />
-          </Grid>
-        </Grid>
+        )}
       </DialogContent>
       <DialogActions
         style={{ backgroundColor: colors.primary[400], padding: "10px" }}
       >
         <Button
-          onClick={onClose}
+          onClick={handleClose}
           sx={{
             color: colors.grey[100],
             "&:hover": { backgroundColor: colors.redAccent[700] },
@@ -206,17 +254,19 @@ const AddStudentModal = ({ open, onClose, onSuccess }) => {
         >
           Cancelar
         </Button>
-        <Button
-          onClick={handleSubmit}
-          sx={{
-            backgroundColor: colors.greenAccent[600],
-            color: colors.grey[100],
-            "&:hover": { backgroundColor: colors.greenAccent[700] },
-          }}
-          variant="contained"
-        >
-          Guardar
-        </Button>
+        {!loading && !serverError && (
+          <Button
+            onClick={handleSubmit}
+            sx={{
+              backgroundColor: colors.greenAccent[600],
+              color: colors.grey[100],
+              "&:hover": { backgroundColor: colors.greenAccent[700] },
+            }}
+            variant="contained"
+          >
+            Guardar
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );
