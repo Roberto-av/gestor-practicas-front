@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
@@ -8,8 +8,11 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import Groups2OutlinedIcon from '@mui/icons-material/Groups2Outlined';
-import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
+import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
+import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
+import dasc from "../../../../assets/img/dasc.jpg";
+import { AuthContext } from "../../../../context/AuthContext";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -30,10 +33,27 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 };
 
 const Sidebar = () => {
+  const { authState } = useContext(AuthContext);
+  const { user, authorities } = authState;
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
+
+  const getRoleLabel = (authorities) => {
+    const roles = authorities.split(',');
+    if (roles.includes('ROLE_ADMIN')) {
+      return 'Admin';
+    }
+    if (roles.includes('ROLE_TEACHER')) {
+      return 'Profesor';
+    }
+    if (roles.includes('ROLE_DEVELOPER')) {
+      return 'Developer';
+    }
+    return 'Usuario';
+  };
 
   return (
     <Box
@@ -53,7 +73,7 @@ const Sidebar = () => {
         "& .pro-menu-item.active": {
           color: "#6870fa !important",
         },
-        height:"100hv"
+        height: "100hv",
       }}
     >
       <ProSidebar collapsed={isCollapsed}>
@@ -91,7 +111,7 @@ const Sidebar = () => {
                   alt="profile-user"
                   width="100px"
                   height="100px"
-                  src={`../../../../assets/img/dasc.jpg`}
+                  src={dasc}
                   style={{ cursor: "pointer", borderRadius: "50%" }}
                 />
               </Box>
@@ -102,10 +122,11 @@ const Sidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  Roberto-av
+                  {user?.sub || "Usuario"}
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
-                  Developer
+                  { console.log("permisos",authorities[11]) }
+                  {authorities ? getRoleLabel(authorities) : 'Usuario'}
                 </Typography>
               </Box>
             </Box>
@@ -147,15 +168,29 @@ const Sidebar = () => {
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >
-              Grupos
+              Clases
             </Typography>
             <Item
-              title="Lista"
+              title="Grupos"
               to="/admin/dashboard/groups"
               icon={<Groups2OutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
+            <Item
+              title="Tareas"
+              to="/admin/dashboard/tasks"
+              icon={<AssignmentOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Typography
+              variant="h6"
+              color={colors.grey[300]}
+              sx={{ m: "15px 0 5px 20px" }}
+            >
+              Instituciones
+            </Typography>
             <Item
               title="Instituciones"
               to="/admin/dashboard/institutions"
