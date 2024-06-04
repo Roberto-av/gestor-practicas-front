@@ -30,14 +30,27 @@ const InstitutionDetailPage = () => {
   const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] =
     useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [serverError, setServerError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchInstitution = async () => {
       try {
         const response = await api.get(`/api/institutions/${id}`);
         setInstitution(response.data);
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching institution:", error);
+        console.error("Error al agregar una institución:", error);
+        if (error.response && error.response.data) {
+          const serverErrors = error.response.data || "Error desconocido";
+          setServerError(serverErrors);
+        } else {
+          setServerError(
+            "Error al tratar de obtener la institucion."
+          );
+        }
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -65,13 +78,24 @@ const InstitutionDetailPage = () => {
   };
 
   const handleSaveClick = async () => {
+    setLoading(true);
     try {
       await api.put(`/api/institutions/update`, institution);
       setIsEditing(false);
       setSuccessMessage("Institución actualizada con éxito");
+      setLoading(false);
     } catch (error) {
-      console.error("Error updating institution:", error);
-      setSuccessMessage("Error al actualizar la institución");
+      console.error("Error al agregar una institución:", error);
+      if (error.response && error.response.data) {
+        const serverErrors = error.response.data || "Error desconocido";
+        setSuccessMessage(serverErrors);
+      } else {
+        setSuccessMessage(
+          "Error al tratar de actualizar la institucion."
+        );
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,6 +134,25 @@ const InstitutionDetailPage = () => {
 
   return (
     <Box>
+      {loading ? (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="200px"
+          >
+            <Loader />
+          </Box>
+        ) : serverError ? (
+          <Typography
+            color="error"
+            variant="body1"
+            style={{ marginTop: 10, textAlign: "center" }}
+          >
+            {serverError}
+          </Typography>
+        ) : (
+      <>
       <Header title="Instituciones" subtitle={institution.name} />
       <Box
         mb="30px"
@@ -497,6 +540,8 @@ const InstitutionDetailPage = () => {
           message={successMessage}
         />
       )}
+      </>
+    )}
     </Box>
   );
 };

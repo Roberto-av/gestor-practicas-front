@@ -1,9 +1,9 @@
-// src/pages/InstitutionsPage.js
 import React, { useEffect, useState } from "react";
 import { Grid, Box, useTheme, Snackbar, Link } from "@mui/material";
 import CustomCard from "../../../../components/admin/dashboard/card";
 import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
 import AddIcon from "@mui/icons-material/Add";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import Header from "../../../../components/common/header";
 import CustomButton from "../../../../components/common/buttton";
 import api from "../../../../utils/api";
@@ -11,6 +11,7 @@ import { tokens } from "../../../../theme";
 import AddInstitutionModal from "../../../../components/admin/dashboard/institutions/add";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../../../components/admin/dashboard/loader";
+import FilterModal from "../../../../components/admin/dashboard/institutions/filter/FilterModal";
 
 const InstitutionsPage = () => {
   const theme = useTheme();
@@ -18,6 +19,8 @@ const InstitutionsPage = () => {
   const [loading, setLoading] = useState(true);
   const [institutions, setInstitutions] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [filters, setFilters] = useState({ status: "" });
   const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
 
@@ -48,10 +51,21 @@ const InstitutionsPage = () => {
     console.log(message);
   };
 
+  const filteredInstitutions = institutions.filter((institution) => {
+    return filters.status === "" || institution.status === filters.status;
+  });
+
   return (
     <Box style={{ position: "relative" }}>
       {loading ? (
-        <Loader />
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="80vh"
+        >
+          <Loader />
+        </Box>
       ) : (
         <>
           <Header title="Instituciones" subtitle="Gestionar instituciones" />
@@ -70,14 +84,30 @@ const InstitutionsPage = () => {
               customColor={colors.greenAccent[600]}
               hoverColor={colors.greenAccent[700]}
             />
+            <CustomButton
+              text="Filtrar"
+              icon={<FilterListIcon />}
+              onClick={() => setIsFilterModalOpen(true)}
+              customColor={colors.blueAccent[600]}
+              hoverColor={colors.blueAccent[700]}
+            />
             <AddInstitutionModal
               open={openModal}
               onClose={handleModalClose}
               onSuccess={handleAddSuccess}
             />
+            <FilterModal
+              open={isFilterModalOpen}
+              onClose={() => setIsFilterModalOpen(false)}
+              onSave={(newFilters) => {
+                setFilters(newFilters);
+                setIsFilterModalOpen(false);
+              }}
+              filters={filters}
+            />
           </Box>
           <Grid container spacing={2}>
-            {institutions.map((institution) => (
+            {filteredInstitutions.map((institution) => (
               <Grid item xs={12} sm={8} md={6} lg={4} key={institution.id}>
                 <Link
                   onClick={() =>
@@ -92,7 +122,7 @@ const InstitutionsPage = () => {
                       `${institution.id}`,
                       `Responsable: ${institution.responsible.name}`,
                       `Giro: ${institution.giro}`,
-                      `telefono: ${institution.telephoneNumber}`,
+                      `Teléfono: ${institution.telephoneNumber}`,
                       `Web: ${institution.web}`,
                     ]}
                   />

@@ -8,6 +8,7 @@ import {
   useTheme,
   Typography,
   Grid,
+  Box,
 } from "@mui/material";
 import {
   sectorOptions,
@@ -19,6 +20,7 @@ import CustomTextField from "../../textField";
 import api from "../../../../../utils/api";
 import Validation from "../../../../../utils/validations/Validation";
 import CustomSelect from "../../Select/CustomSelect";
+import Loader from "../../loader";
 
 const AddInstitutionModal = ({ open, onClose, onSuccess }) => {
   const theme = useTheme();
@@ -54,6 +56,8 @@ const AddInstitutionModal = ({ open, onClose, onSuccess }) => {
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState("");
 
   const validate = () => {
     let tempErrors = {};
@@ -216,14 +220,12 @@ const AddInstitutionModal = ({ open, onClose, onSuccess }) => {
   };
 
   const handleSubmit = async () => {
-    console.log("Entre al handleSubmit");
     setIsSubmitted(true);
     console.log("Form data before validation:", formData);
     if (!validate()) {
-      console.log("Validation failed", errors);
-      console.log("Form data after validation:", formData);
       return;
     }
+    setLoading(true);
     console.log("Validation passed");
 
     try {
@@ -237,11 +239,31 @@ const AddInstitutionModal = ({ open, onClose, onSuccess }) => {
       setFormData(initialFormData);
       setIsSubmitted(false);
     } catch (error) {
-      console.error("Error al guardar la institución:", error);
-      alert(
-        "Error al guardar la institución. Por favor, inténtalo de nuevo más tarde."
-      );
+      console.error("Error al agregar una institución:", error);
+      if (error.response && error.response.data) {
+        const serverErrors = error.response.data || "Error desconocido";
+        setServerError(serverErrors);
+      } else {
+        setServerError(
+          "Error al tratar de añadir una nueva institución."
+        );
+      }
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleReset = () => {
+    setFormData(initialFormData);
+    setErrors({});
+    setIsSubmitted(false);
+    setServerError("");
+    setLoading(false);
+  };
+
+  const handleClose = () => {
+    handleReset();
+    onClose();
   };
 
   return (
@@ -262,6 +284,24 @@ const AddInstitutionModal = ({ open, onClose, onSuccess }) => {
           color: colors.grey[100],
         }}
       >
+          {loading ? (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="200px"
+          >
+            <Loader />
+          </Box>
+        ) : serverError ? (
+          <Typography
+            color="error"
+            variant="body1"
+            style={{ marginTop: 10, textAlign: "center" }}
+          >
+            {serverError}
+          </Typography>
+        ) : (
         <Grid container spacing={2}>
           <Grid item xs={12} sm={12}>
             <CustomTextField
@@ -479,12 +519,13 @@ const AddInstitutionModal = ({ open, onClose, onSuccess }) => {
             />
           </Grid>
         </Grid>
+        )}
       </DialogContent>
       <DialogActions
         style={{ backgroundColor: colors.primary[400], padding: "10px" }}
       >
         <Button
-          onClick={onClose}
+          onClick={handleClose}
           sx={{
             color: colors.grey[100],
             "&:hover": { backgroundColor: colors.redAccent[700] },
