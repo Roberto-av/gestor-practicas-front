@@ -1,17 +1,25 @@
-import React, { useContext } from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthContext';
-import { Outlet } from 'react-router-dom';
 
 const PrivateRoute = () => {
-  const { authState } = useContext(AuthContext);
-  
-  const isAuthenticated = authState.token && authState.authorities && 
-    authState.authorities.split(',').some(authority => {
-      return ['ROLE_ADMIN', 'ROLE_TEACHER', 'ROLE_DEVELOPER'].includes(authority.trim());
-    });
-  
-  return isAuthenticated ? <Outlet />  : <Navigate to="/" replace />;
+  const { authState, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { token, authorities } = authState;
+
+  useEffect(() => {
+    if (!token) {
+      logout();
+      navigate('/login');
+    }
+  }, [token, logout, navigate]);
+
+  const isAuthenticated = token && authorities &&
+    authorities.split(',').some(authority =>
+      ['ROLE_ADMIN', 'ROLE_TEACHER', 'ROLE_DEVELOPER'].includes(authority.trim())
+    );
+
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export default PrivateRoute;
