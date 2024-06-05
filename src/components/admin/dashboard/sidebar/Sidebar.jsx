@@ -4,13 +4,13 @@ import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../../../theme";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
 import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import dasc from "../../../../assets/img/dasc.jpg";
 import { AuthContext } from "../../../../context/AuthContext";
 
@@ -136,7 +136,7 @@ const Sidebar = () => {
             <Item
               title="Dashboard"
               to="/admin/dashboard"
-              icon={<HomeOutlinedIcon />}
+              icon={<DashboardOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />
