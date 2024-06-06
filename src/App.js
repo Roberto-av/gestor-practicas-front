@@ -14,6 +14,7 @@ import InstitutionDetailPage from "./pages/admin/dashboard/institutions/details"
 import TasksPage from "./pages/admin/dashboard/tasks";
 import GroupDetailsPage from "./pages/admin/dashboard/groups/details";
 import TaskFiles from "./pages/admin/dashboard/tasks/files";
+import HomeStudents from "./pages/student/home";
 
 const App = () => {
   return (
@@ -28,14 +29,22 @@ const App = () => {
               <Route path="tasks" element={<TasksPage />} />
               <Route path="task/:taskId" element={<TaskFiles />} />
               <Route path="institutions" element={<InstitutionsPage />} />
-              <Route path="institutions/:id" element={<InstitutionDetailPage />} />
+              <Route
+                path="institutions/:id"
+                element={<InstitutionDetailPage />}
+              />
               <Route path="users" element={<Users />} />
               <Route path="" element={<Home />} />
             </Route>
           </Route>
-          <Route path="/" element={<StudentLayout />}></Route>
+          <Route path="/" element={<StudentLayout />}>
+            <Route path="" element={<HomeStudents />} />
+          </Route>
           <Route path="/login" element={<Login />} />
-          <Route path="/auth/register/student" element={<StudentRegistrationPage />} />
+          <Route
+            path="/auth/register/student"
+            element={<StudentRegistrationPage />}
+          />
         </Routes>
       </Router>
     </AuthProvider>
