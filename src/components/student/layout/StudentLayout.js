@@ -12,9 +12,9 @@ function Layout() {
 
   return (
     <ThemeProvider theme={theme}>
-        <div className="app">
-          <main className="content">
-            <StudentTopbar /> 
+        <div className="app-student" >
+          <main className="content-app">
+          <StudentTopbar /> 
             <Outlet /> 
           </main>
         </div>

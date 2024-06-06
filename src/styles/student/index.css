@@ -3,7 +3,8 @@
 html,
 body,
 #root,
-.app-student {
+.app-student
+.content-app {
   height: 100%;
   width: 100%;
   font-family: "Montserrat", sans-serif !important;
@@ -12,4 +13,15 @@ body,
 .app-student {
   display: flex;
   position: relative;
+}
+
+.content-app {
+  margin-top: 64px; /* Ajusta esto a la altura del topbar */
+  padding-top: 16px;
+}
+
+@media (max-width: 600px) {
+  .content-app {
+    margin-top: 56px; /* Ajusta esto para pantallas pequeñas si el topbar cambia de tamaño */
+  }
 }
