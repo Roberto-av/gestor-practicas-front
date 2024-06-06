@@ -1,10 +1,11 @@
 import React, { useState, useContext } from "react";
 import { Box, Button, TextField, Typography, Grid } from "@mui/material";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../context/AuthContext";
 import api from "../../../utils/api";
 import Loader from "../../../components/admin/dashboard/loader";
 import { jwtDecode } from "jwt-decode";
+import dascLogo from "../../../assets/img/dascLogo.png";
 
 const Login = () => {
   const { setAuthState } = useContext(AuthContext);
@@ -35,7 +36,11 @@ const Login = () => {
     if (isSubmitted) {
       setErrors((prevErrors) => ({
         ...prevErrors,
-        [name]: value ? "" : `El ${name === "username" ? "nombre de usuario" : "contraseña"} es requerido`,
+        [name]: value
+          ? ""
+          : `El ${
+              name === "username" ? "nombre de usuario" : "contraseña"
+            } es requerido`,
       }));
     }
   };
@@ -53,7 +58,7 @@ const Login = () => {
         jwt,
         user: jwtDecode(jwt),
       });
-      navigate('/');
+      navigate("/");
       window.location.reload(true);
     } catch (error) {
       console.error("Error en el login:", error);
@@ -69,128 +74,157 @@ const Login = () => {
   };
 
   return (
-    <Grid
-      container
-      justifyContent="center"
-      alignItems="center"
-      style={{ minHeight: "80vh" }}
-    >
-      {loading ? (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          height="80vh"
-        >
-          <Loader />
-        </Box>
-      ) : (
-        <Grid item xs={11} sm={8} md={6} lg={4}>
+    <>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="60px"
+        mb={2}
+      >
+        <img src={dascLogo} alt="Logo" height="40" />
+      </Box>
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        style={{ minHeight: "50vh" }}
+      >
+        {loading ? (
           <Box
             display="flex"
-            flexDirection="column"
+            justifyContent="center"
             alignItems="center"
-            p={3}
-            borderRadius={2}
+            height="80vh"
           >
-            <Typography variant="h4" mb={2}>
-              Login
-            </Typography>
-            <form onSubmit={handleSubmit} style={{ width: "100%" }}>
-              <TextField
-                label="Username"
-                name="username"
-                type="text"
-                fullWidth
-                margin="normal"
-                value={username}
-                sx={{
-                  "& .MuiInputLabel-root": {
-                    color: "#0f0f0f",
-                  },
-                  "& .MuiInputLabel-outlined": {
-                    transform: "translate(14px, 14px) scale(1)",
-                  },
-                  "& .MuiInputLabel-outlined.MuiInputLabel-shrink": {
-                    transform: "translate(14px, -6px) scale(0.75)",
-                  },
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "#0f0f0f",
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "#0f0f0f",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#0f0f0f",
-                    },
-                  },
-                }}
-                onChange={handleChange}
-                error={isSubmitted && !!errors.username}
-                helperText={isSubmitted && errors.username}
-                variant="outlined"
-              />
-              <TextField
-                label="Password"
-                name="password"
-                type="password"
-                fullWidth
-                margin="normal"
-                value={password}
-                sx={{
-                  marginBottom: "20px",
-                  "& .MuiInputLabel-root": {
-                    color: "#0f0f0f",
-                  },
-                  "& .MuiInputLabel-outlined": {
-                    transform: "translate(14px, 14px) scale(1)",
-                  },
-                  "& .MuiInputLabel-outlined.MuiInputLabel-shrink": {
-                    transform: "translate(14px, -6px) scale(0.75)",
-                  },
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "#0f0f0f",
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "#0f0f0f",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#0f0f0f",
-                    },
-                  },
-                }}
-                onChange={handleChange}
-                error={isSubmitted && !!errors.password}
-                helperText={isSubmitted && errors.password}
-                variant="outlined"
-              />
-              {serverError && (
-                <Typography color="error" variant="body2" mb={2}>
-                  {serverError}
-                </Typography>
-              )}
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{
-                  backgroundColor: "#0F0F0F",
-                  color: "#FFFFFF",
-                  height: "65px",
-                  "&:hover": {
-                    backgroundColor: "#222222",
-                  },
-                }}
-                fullWidth
-              >
-                INGRESAR
-              </Button>
-            </form>
+            <Loader />
           </Box>
-        </Grid>
-      )}
-    </Grid>
+        ) : (
+          <Grid item xs={11} sm={8} md={6} lg={4}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              p={3}
+              borderRadius={2}
+            >
+              <Typography variant="h5" mb={2}>
+                Iniciar Sesión
+              </Typography>
+              <form onSubmit={handleSubmit} style={{ width: "100%" }}>
+                <TextField
+                  label="Username"
+                  name="username"
+                  type="text"
+                  fullWidth
+                  margin="normal"
+                  value={username}
+                  sx={{
+                    "& .MuiInputLabel-root": {
+                      color: "#454545",
+                      padding: "7px",
+                    },
+                    "& .MuiInputLabel-outlined": {
+                      transform: "translate(14px, 14px) scale(1)",
+                    },
+                    "& .MuiInputLabel-outlined.MuiInputLabel-shrink": {
+                      transform: "translate(14px, -6px) scale(0.75)",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: "#0f0f0f",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#0f0f0f",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#0f0f0f",
+                      },
+                      borderRadius: "16px",
+                      padding: "5px",
+                    },
+                  }}
+                  onChange={handleChange}
+                  error={isSubmitted && !!errors.username}
+                  helperText={isSubmitted && errors.username}
+                  variant="outlined"
+                />
+                <TextField
+                  label="Password"
+                  name="password"
+                  type="password"
+                  fullWidth
+                  margin="normal"
+                  value={password}
+                  sx={{
+                    marginBottom: "20px",
+                    "& .MuiInputLabel-root": {
+                      color: "#454545",
+                      padding: "7px",
+                    },
+                    "& .MuiInputLabel-outlined": {
+                      transform: "translate(14px, 14px) scale(1)",
+                    },
+                    "& .MuiInputLabel-outlined.MuiInputLabel-shrink": {
+                      transform: "translate(14px, -6px) scale(0.75)",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: "#0f0f0f",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#0f0f0f",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#0f0f0f",
+                      },
+                      borderRadius: "16px",
+                      padding: "5px",
+                    },
+                  }}
+                  onChange={handleChange}
+                  error={isSubmitted && !!errors.password}
+                  helperText={isSubmitted && errors.password}
+                  variant="outlined"
+                />
+                {serverError && (
+                  <Typography color="error" variant="body2" mb={2}>
+                    {serverError}
+                  </Typography>
+                )}
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#0F0F0F",
+                    color: "#FFFFFF",
+                    height: "65px",
+                    "&:hover": {
+                      backgroundColor: "#222222",
+                    },
+                    borderRadius: "16px",
+                  }}
+                  fullWidth
+                >
+                  INGRESAR
+                </Button>
+              </form>
+            </Box>
+          </Grid>
+        )}
+      </Grid>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="60px"
+        mt={4}
+      >
+        <Typography variant="body2" color="textSecondary">
+          2024 © Departamento Académico de Sistemas Computacionales
+        </Typography>
+      </Box>
+    </>
   );
 };
 

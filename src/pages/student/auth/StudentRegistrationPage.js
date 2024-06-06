@@ -5,6 +5,7 @@ import api from '../../../utils/api';
 import { AuthContext } from '../../../context/AuthContext';
 import { jwtDecode } from 'jwt-decode';
 import Loader from '../../../components/admin/dashboard/loader';
+import dascLogo from "../../../assets/img/dascLogo.png";
 
 function StudentRegistrationPage() {
   const [username, setUsername] = useState('');
@@ -88,11 +89,21 @@ function StudentRegistrationPage() {
   };
 
   return (
+    <>
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      height="60px"
+      mb={2}
+    >
+      <img src={dascLogo} alt="Logo" height="40" />
+    </Box>
     <Grid
       container
       justifyContent="center"
       alignItems="center"
-      style={{ minHeight: "80vh" }}
+      style={{ minHeight: "50vh" }}
     >
       {loading ? (
         <Box
@@ -112,7 +123,7 @@ function StudentRegistrationPage() {
             p={3}
             borderRadius={2}
           >
-            <Typography variant="h4" mb={2}>
+            <Typography variant="h5" mb={2}>
               Registro
             </Typography>
             <form onSubmit={handleSubmit} style={{ width: "100%" }}>
@@ -125,7 +136,8 @@ function StudentRegistrationPage() {
                 value={username}
                 sx={{
                   "& .MuiInputLabel-root": {
-                    color: "#0f0f0f",
+                    color: "#454545",
+                    padding: "7px",
                   },
                   "& .MuiInputLabel-outlined": {
                     transform: "translate(14px, 14px) scale(1)",
@@ -143,6 +155,8 @@ function StudentRegistrationPage() {
                     "&.Mui-focused fieldset": {
                       borderColor: "#0f0f0f",
                     },
+                    borderRadius: "16px",
+                    padding: "5px",
                   },
                 }}
                 onChange={handleChange}
@@ -160,7 +174,8 @@ function StudentRegistrationPage() {
                 sx={{
                   marginBottom: "20px",
                   "& .MuiInputLabel-root": {
-                    color: "#0f0f0f",
+                    color: "#454545",
+                    padding: "7px",
                   },
                   "& .MuiInputLabel-outlined": {
                     transform: "translate(14px, 14px) scale(1)",
@@ -178,6 +193,8 @@ function StudentRegistrationPage() {
                     "&.Mui-focused fieldset": {
                       borderColor: "#0f0f0f",
                     },
+                    borderRadius: "16px",
+                    padding: "5px",
                   },
                 }}
                 onChange={handleChange}
@@ -200,16 +217,29 @@ function StudentRegistrationPage() {
                   "&:hover": {
                     backgroundColor: "#222222",
                   },
+                  borderRadius: "16px",
                 }}
                 fullWidth
               >
-                INGRESAR
+                REGISTRARSE
               </Button>
             </form>
           </Box>
         </Grid>
       )}
     </Grid>
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      height="60px"
+      mt={4}
+    >
+      <Typography variant="body2" color="textSecondary">
+        2024 © Departamento Académico de Sistemas Computacionales
+      </Typography>
+    </Box>
+  </>
   );
 };
 
