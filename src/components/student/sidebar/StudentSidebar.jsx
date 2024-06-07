@@ -22,16 +22,16 @@ const StudentSidebar = ({ open, onClose, handleButtonClick, activeButton, button
       </IconButton>
       <List>
         <ListItem button onClick={() => { handleButtonClick("Inicio", "/"); onClose(); }} selected={activeButton === "Inicio"}>
-          <ListItemText primary="Inicio" sx={{ padding: '10px 20px', ...buttonStyles(activeButton === "Inicio") }} />
+          <ListItemText primary="Inicio" sx={{ padding: '10px 20px',borderRadius:"16px" , ...buttonStyles(activeButton === "Inicio") }} />
         </ListItem>
-        <ListItem button onClick={() => { handleButtonClick("Grupo", "/sd"); onClose(); }} selected={activeButton === "Grupo"}>
-          <ListItemText primary="Grupo" sx={{ padding: '10px 20px', ...buttonStyles(activeButton === "Grupo") }} />
+        <ListItem button onClick={() => { handleButtonClick("Grupo", "/group"); onClose(); }} selected={activeButton === "Grupo"}>
+          <ListItemText primary="Grupo" sx={{ padding: '10px 20px',borderRadius:"16px" , ...buttonStyles(activeButton === "Grupo") }} />
         </ListItem>
         <ListItem button onClick={() => { handleButtonClick("Instituciones", "/"); onClose(); }} selected={activeButton === "Instituciones"}>
-          <ListItemText primary="Instituciones" sx={{ padding: '10px 20px', ...buttonStyles(activeButton === "Instituciones") }} />
+          <ListItemText primary="Instituciones" sx={{ padding: '10px 20px',borderRadius:"16px" , ...buttonStyles(activeButton === "Instituciones") }} />
         </ListItem>
         <ListItem button onClick={() => { handleButtonClick("Información", "/"); onClose(); }} selected={activeButton === "Información"}>
-          <ListItemText primary="Información" sx={{ padding: '10px 20px', ...buttonStyles(activeButton === "Información") }} />
+          <ListItemText primary="Información" sx={{ padding: '10px 20px',borderRadius:"16px" , ...buttonStyles(activeButton === "Información") }} />
         </ListItem>
         {hasPermission && (
           <ListItem button component={Link} to="/admin/dashboard" onClick={onClose}>

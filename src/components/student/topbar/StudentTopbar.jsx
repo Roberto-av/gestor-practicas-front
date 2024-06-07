@@ -102,7 +102,7 @@ const StudentTopbar = () => {
                 Inicio
               </Button>
               <Button
-                onClick={() => handleButtonClick("Grupo", "#")}
+                onClick={() => handleButtonClick("Grupo", "/group")}
                 sx={buttonStyles(activeButton === "Grupo")}
               >
                 Grupo

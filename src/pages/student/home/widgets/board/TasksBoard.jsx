@@ -26,7 +26,7 @@ const TaskBoard = ({ tasks }) => {
         <Grid container spacing={1}>
           {groupedTasks[date].map(task => (
             <Grid item xs={12} key={task.id}>
-              <TaskCard title={task.tittle} dueTime={format(parseISO(task.endDate), 'HH:mm')} />
+              <TaskCard tittle={task.tittle} text={format(parseISO(task.endDate), 'HH:mm')} color={"#EFEFEF"}/>
             </Grid>
           ))}
         </Grid>

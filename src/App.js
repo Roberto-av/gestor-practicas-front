@@ -15,6 +15,7 @@ import TasksPage from "./pages/admin/dashboard/tasks";
 import GroupDetailsPage from "./pages/admin/dashboard/groups/details";
 import TaskFiles from "./pages/admin/dashboard/tasks/files";
 import HomeStudents from "./pages/student/home";
+import StudentGroup from "./pages/student/groups";
 
 const App = () => {
   return (
@@ -39,6 +40,7 @@ const App = () => {
           </Route>
           <Route path="/" element={<StudentLayout />}>
             <Route path="" element={<HomeStudents />} />
+            <Route path="group" element={<StudentGroup />} />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route
