@@ -4,6 +4,7 @@ import TaskCard from "../../../components/student/widgets/taskBoard/tasks";
 import api from "../../../utils/api";
 import { AuthContext } from "../../../context/AuthContext";
 import Loader from "../../../components/admin/dashboard/loader";
+import { useNavigate } from "react-router-dom";
 
 const StudentGroup = () => {
   const { authState } = useContext(AuthContext);
@@ -11,10 +12,11 @@ const StudentGroup = () => {
   const [studentGroup, setStudentGroup] = useState(null);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Estado de carga
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setIsLoading(true); // Iniciar carga al comenzar la consulta
+    setIsLoading(true);
 
     // Fetch student info and tasks from the API endpoint
     if (authState.user) {
@@ -60,6 +62,10 @@ const StudentGroup = () => {
         });
     }
   }, [authState]);
+
+  const handleTaskClick = (taskId) => {
+    navigate(`/group/task/${taskId}`);
+  };
 
   return (
     <>
@@ -121,7 +127,9 @@ const StudentGroup = () => {
                       description={task.description}
                       text={task.statusTask === "ENABLE" ? "Activo" : "No activo"}
                       colorText={task.statusTask === "ENABLE" ? "#12A14B" : ""}
-                      color={"#DCDFE4"}
+                      color={task.statusTask === "ENABLE" ? "#dbfde8" : "#DCDFE4"}
+                      borderColor={task.statusTask === "ENABLE" ? "1px solid #46e284" : ""}
+                      onClick={() => handleTaskClick(task.id)}
                     />
                   </Box>
                 ))

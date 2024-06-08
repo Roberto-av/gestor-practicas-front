@@ -1,23 +1,24 @@
 import { Card, CardContent, Typography, Grid } from "@mui/material";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 
-const TaskCard = ({ tittle, text, description, color, colorText }) => {
+const TaskCard = ({ tittle, text, description, color, colorText, onClick, borderColor }) => {
   return (
     <Card
       sx={{
         width: "100%",
         height: "auto",
         backgroundColor: color,
-        border: "1px solid #989898",
+        border: borderColor ? borderColor : "1px solid #989898",
         borderRadius: "16px",
         boxShadow: 2,
-        cursor: "pointer", // Cambia el cursor a pointer
-        transition: "transform 0.3s, box-shadow 0.3s", // Añade la transición
+        cursor: "pointer",
+        transition: "transform 0.3s, box-shadow 0.3s",
         "&:hover": {
-          transform: "translateY(-5px)", // Efecto de elevación
-          boxShadow: 4, // Aumenta la sombra al pasar el ratón
+          transform: "translateY(-5px)",
+          boxShadow: 4,
         },
       }}
+      onClick={onClick}
     >
       <CardContent>
         <Grid container alignItems="center" spacing={2}>
