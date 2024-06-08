@@ -14,7 +14,10 @@ const Widgets = ({ onDataLoaded }) => {
     username: "",
     student: {
       name: "",
-      institutionName: "",
+      institution: {
+        id: null,
+        name: "",
+      },
     },
   });
   const [error, setError] = useState(null);
@@ -28,17 +31,15 @@ const Widgets = ({ onDataLoaded }) => {
       api
         .get(`/api/users/${studentId}`)
         .then((response) => {
-          if (response.data.student) {
-            setStudentData(response.data);
-          } else {
-            setStudentData({
-              ...response.data,
-              student: {
-                name: "",
-                institutionName: "",
-              },
-            });
-          }
+          const responseData = response.data;
+          const student = responseData.student || { name: "", institution: { id: null, name: "" } };
+          setStudentData({
+            ...responseData,
+            student: {
+              ...student,
+              institution: student.institution || { id: null, name: "" },
+            },
+          });
           setIsLoading(false);
           onDataLoaded();
         })
@@ -47,11 +48,11 @@ const Widgets = ({ onDataLoaded }) => {
             setError(error.response.data.message);
           } else if (error.request) {
             setError("No se recibió respuesta del servidor.");
-          } 
+          }
           setIsLoading(false);
         });
     }
-  }, [authState]);
+  }, [authState, onDataLoaded]);
 
   return (
     <Box width="100%">
@@ -69,38 +70,38 @@ const Widgets = ({ onDataLoaded }) => {
         </Box>
       ) : (
         <>
-      <h2>Plataforma para las practicas profesionales del DASC 2024</h2>
-      <Grid container pacing={{ xs: 1, sm: 2, md: 2, lg: 2 }}>
-        <Grid item xs={12} md={4}>
-          <CustomCard
-            icon={SchoolIcon}
-            title="Estudiante"
-            subtitle={
-              studentData.student.name ? studentData.student.name : "-"
-            }
-          />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <CustomCard
-            icon={BusinessOutlinedIcon}
-            title="Institución Asociada"
-            subtitle={
-              studentData.student.institutionName
-                ? studentData.student.institutionName
-                : "-"
-            }
-          />
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <CustomCard
-            icon={AssignmentTurnedInOutlinedIcon}
-            title="Tareas Entregadas"
-            subtitle="0"
-          />
-        </Grid>
-      </Grid>
-      {error && <p>Error: {error}</p>}
-      </>
+          <h2>Plataforma para las practicas profesionales del DASC</h2>
+          <Grid container spacing={{ xs: 1, sm: 2, md: 2, lg: 2 }}>
+            <Grid item xs={12} md={4}>
+              <CustomCard
+                icon={SchoolIcon}
+                title="Estudiante"
+                subtitle={
+                  studentData.student?.name ? studentData.student.name : "-"
+                }
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <CustomCard
+                icon={BusinessOutlinedIcon}
+                title="Institución Asociada"
+                subtitle={
+                  studentData.student?.institution?.name
+                    ? studentData.student.institution.name
+                    : "-"
+                }
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <CustomCard
+                icon={AssignmentTurnedInOutlinedIcon}
+                title="Tareas Entregadas"
+                subtitle="0"
+              />
+            </Grid>
+          </Grid>
+          {error && <p>Error: {error}</p>}
+        </>
       )}
     </Box>
   );

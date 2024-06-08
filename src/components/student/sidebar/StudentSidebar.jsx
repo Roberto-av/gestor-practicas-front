@@ -27,7 +27,7 @@ const StudentSidebar = ({ open, onClose, handleButtonClick, activeButton, button
         <ListItem button onClick={() => { handleButtonClick("Grupo", "/group"); onClose(); }} selected={activeButton === "Grupo"}>
           <ListItemText primary="Grupo" sx={{ padding: '10px 20px',borderRadius:"16px" , ...buttonStyles(activeButton === "Grupo") }} />
         </ListItem>
-        <ListItem button onClick={() => { handleButtonClick("Instituciones", "/"); onClose(); }} selected={activeButton === "Instituciones"}>
+        <ListItem button onClick={() => { handleButtonClick("Instituciones", "/institutions"); onClose(); }} selected={activeButton === "Instituciones"}>
           <ListItemText primary="Instituciones" sx={{ padding: '10px 20px',borderRadius:"16px" , ...buttonStyles(activeButton === "Instituciones") }} />
         </ListItem>
         <ListItem button onClick={() => { handleButtonClick("Información", "/"); onClose(); }} selected={activeButton === "Información"}>

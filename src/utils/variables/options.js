@@ -5,8 +5,8 @@ export const sectorOptions = [
   ];
   
   export const supportOptions = [
-    { value: "true", label: "SI" },
-    { value: "false", label: "NO" },
+    { value: true, label: "SI" },
+    { value: false, label: "NO" },
   ];
   
   export const modalityOptions = [

@@ -23,6 +23,7 @@ const StudentTopbar = () => {
 
   const handleButtonClick = (button, route) => {
     setActiveButton(button);
+
     navigate(route);
   };
 
@@ -115,7 +116,7 @@ const StudentTopbar = () => {
           {!isSmallScreen && (
             <>
               <Button
-                onClick={() => handleButtonClick("Instituciones", "#")}
+                onClick={() => handleButtonClick("Instituciones", "/institutions")}
                 sx={buttonStyles(activeButton === "Instituciones")}
               >
                 Instituciones

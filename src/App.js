@@ -17,6 +17,8 @@ import TaskFiles from "./pages/admin/dashboard/tasks/files";
 import HomeStudents from "./pages/student/home";
 import StudentGroup from "./pages/student/groups";
 import TaskDetails from "./pages/student/groups/taskDetails";
+import InstitutionsStudents from "./pages/student/institutions";
+import InstitutionDetailPageStudent from "./pages/student/institutions/details";
 
 const App = () => {
   return (
@@ -43,6 +45,8 @@ const App = () => {
             <Route path="" element={<HomeStudents />} />
             <Route path="group" element={<StudentGroup />} />
             <Route path="group/task/:taskId" element={<TaskDetails />} />
+            <Route path="institutions" element={<InstitutionsStudents />} />
+            <Route path="institution/:institutionId" element={<InstitutionDetailPageStudent />} />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route
