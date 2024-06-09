@@ -359,27 +359,7 @@ const InstitutionDetailPageStudent = () => {
                         }}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <CustomTextField
-                        label="Número"
-                        value={institution.address?.number || ""}
-                        variant="filled"
-                        InputProps={{
-                          readOnly: true,
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <CustomTextField
-                        label="Colonia"
-                        value={institution.address?.neighborhood || ""}
-                        variant="filled"
-                        InputProps={{
-                          readOnly: true,
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12} sm={4}>
                       <CustomTextField
                         label="Municipio"
                         value={institution.address?.city || ""}
@@ -389,10 +369,20 @@ const InstitutionDetailPageStudent = () => {
                         }}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12} sm={4}>
                       <CustomTextField
-                        label="País"
-                        value={institution.address?.country || ""}
+                        label="Estado"
+                        value={institution.address?.state || ""}
+                        variant="filled"
+                        InputProps={{
+                          readOnly: true,
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                      <CustomTextField
+                        label="Codigo Postal"
+                        value={institution.address?.postalCode || ""}
                         variant="filled"
                         InputProps={{
                           readOnly: true,
@@ -434,18 +424,8 @@ const InstitutionDetailPageStudent = () => {
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <CustomTextField
-                          label="Teléfono"
-                          value={institution.responsible?.telephone || ""}
-                          variant="filled"
-                          InputProps={{
-                            readOnly: true,
-                          }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={12}>
-                        <CustomTextField
-                          label="Correo Electrónico"
-                          value={institution.responsible?.email || ""}
+                          label="Cargo"
+                          value={institution.responsible?.education || ""}
                           variant="filled"
                           InputProps={{
                             readOnly: true,
