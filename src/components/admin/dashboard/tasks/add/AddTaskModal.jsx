@@ -13,11 +13,15 @@ import {
   FormControl,
   InputLabel,
   FormHelperText,
+  IconButton,
+  Box,
 } from "@mui/material";
 import { tokens } from "../../../../../theme";
 import CustomTextField from "../../textField";
 import api from "../../../../../utils/api";
 import { AuthContext } from "../../../../../context/AuthContext";
+import { useDropzone } from "react-dropzone";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const AddTaskModal = ({ open, onClose, onSuccess }) => {
   const theme = useTheme();
@@ -41,6 +45,10 @@ const AddTaskModal = ({ open, onClose, onSuccess }) => {
   const [errors, setErrors] = useState({});
   const [groups, setGroups] = useState([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showDropzone, setShowDropzone] = useState(false);
+  const [filePreviews, setFilePreviews] = useState([]);
+  const [fileNames, setFileNames] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchGroups = async () => {
@@ -55,11 +63,57 @@ const AddTaskModal = ({ open, onClose, onSuccess }) => {
     fetchGroups();
   }, []);
 
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: {
+      "application/pdf": [".pdf"],
+      "application/msword": [".doc"],
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        [".docx"],
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
+        ".xlsx",
+      ],
+      "image/jpeg": [".jpeg", ".jpg"],
+      "image/png": [".png"],
+    },
+    onDrop: (acceptedFiles, rejectedFiles) => {
+      if (filePreviews.length + acceptedFiles.length > 2) {
+        setErrorMessage("Solo se permiten un máximo de dos archivos.");
+      } else if (rejectedFiles.length > 0) {
+        setErrorMessage("Solo se permiten archivos .pdf, .doc, .docx, .jpg, .png y .xlsx");
+      } else {
+        const previews = acceptedFiles.map((file) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        );
+        setFilePreviews((prev) => [...prev, ...previews]);
+        setFileNames((prev) => [
+          ...prev,
+          ...acceptedFiles.map((file) => file.name),
+        ]);
+        setErrorMessage("");
+      }
+    },
+  });
+
+  const handleRemoveFile = (index) => {
+    const newFilePreviews = [...filePreviews];
+    newFilePreviews.splice(index, 1);
+    setFilePreviews(newFilePreviews);
+    const newFileNames = [...fileNames];
+    newFileNames.splice(index, 1);
+    setFileNames(newFileNames);
+  };
+
   const validate = () => {
     let tempErrors = {};
     tempErrors.tittle = formData.tittle ? "" : "El título es requerido";
-    tempErrors.description = formData.description ? "" : "La descripción es requerida";
-    tempErrors.initialDate = formData.initialDate ? "" : "La fecha inicial es requerida";
+    tempErrors.description = formData.description
+      ? ""
+      : "La descripción es requerida";
+    tempErrors.initialDate = formData.initialDate
+      ? ""
+      : "La fecha inicial es requerida";
     tempErrors.endDate = formData.endDate ? "" : "La fecha final es requerida";
     tempErrors.groupId = formData.group.id ? "" : "El grupo es requerido";
     setErrors(tempErrors);
@@ -120,7 +174,31 @@ const AddTaskModal = ({ open, onClose, onSuccess }) => {
           },
         };
 
-        const response = await api.post("/api/tasks/create", taskData);
+        let response;
+        if (showDropzone && filePreviews.length > 0) {
+          const formDataToSend = new FormData();
+          formDataToSend.append(
+            "task",
+            new Blob([JSON.stringify(taskData)], { type: "application/json" })
+          );
+          filePreviews.forEach((file) => {
+            formDataToSend.append("files", file, file.name);
+          });
+
+          response = await api.post(
+            "/api/tasks/create-with-files",
+            formDataToSend,
+            {
+              headers: {},
+            }
+          );
+        } else {
+          response = await api.post("/api/tasks/create", taskData, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+        }
 
         if (response.status !== 200) {
           throw new Error("Failed to create task");
@@ -133,7 +211,9 @@ const AddTaskModal = ({ open, onClose, onSuccess }) => {
         setIsSubmitted(false);
       } catch (error) {
         console.error("Error creating task:", error);
-        alert("Error al crear la tarea. Por favor, inténtalo de nuevo más tarde.");
+        alert(
+          "Error al crear la tarea. Por favor, inténtalo de nuevo más tarde."
+        );
       }
     }
   };
@@ -215,14 +295,17 @@ const AddTaskModal = ({ open, onClose, onSuccess }) => {
               helperText={isSubmitted && errors.endDate}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <FormControl fullWidth error={isSubmitted && !!errors.groupId}>
-              <InputLabel>Grupo *</InputLabel>
+              <InputLabel id="group-label" style={{ color: colors.grey[100] }}>
+                Grupo
+              </InputLabel>
               <Select
-                label="Grupo *"
+                labelId="group-label"
                 name="groupId"
                 value={formData.group.id}
                 onChange={handleChange}
+                style={{ color: colors.grey[100] }}
               >
                 {groups.map((group) => (
                   <MenuItem key={group.id} value={group.id}>
@@ -235,30 +318,132 @@ const AddTaskModal = ({ open, onClose, onSuccess }) => {
               )}
             </FormControl>
           </Grid>
+          <Grid item xs={12}>
+            <Box display="flex" justifyContent="center">
+              <Button
+                variant="contained"
+                onClick={() => setShowDropzone(!showDropzone)}
+                style={{
+                  backgroundColor: colors.blueAccent[600],
+                  color: colors.grey[100],
+                  borderRadius: "16px",
+                  padding: "16px",
+                  marginTop: "20px",
+                }}
+              >
+                {showDropzone ? "Cerrar" : "Subir Archivos"}
+              </Button>
+            </Box>
+          </Grid>
+          {showDropzone && (
+            <Grid item xs={12}>
+              <Box
+                {...getRootProps()}
+                border="2px dashed #cccccc"
+                borderRadius={2}
+                p={4}
+                textAlign="center"
+                mb={2}
+              >
+                <input {...getInputProps()} />
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
+                  }}
+                >
+                  Arrastra y suelta archivos aquí, o haz clic para seleccionar
+                </Typography>
+              </Box>
+
+              {errorMessage && (
+                <Typography
+                  color="error"
+                  variant="body2"
+                  sx={{
+                    fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
+                    mt: 2,
+                  }}
+                >
+                  {errorMessage}
+                </Typography>
+              )}
+              {filePreviews.length > 0 && (
+                <Box textAlign="left" mb={2} width="100%">
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
+                      overflowWrap: "break-word",
+                      wordBreak: "break-word",
+                    }}
+                    mb={1}
+                  >
+                    <Box component="span" fontWeight="bold">
+                      Archivos seleccionados:
+                    </Box>
+                  </Typography>
+                  {filePreviews.map((file, index) => (
+                    <Box key={index} textAlign="center" mb={2} width="100%">
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="space-between"
+                      >
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            fontSize: {
+                              xs: "0.8rem",
+                              sm: "0.9rem",
+                              md: "1rem",
+                            },
+                            overflowWrap: "break-word",
+                            wordBreak: "break-word",
+                          }}
+                        >
+                          {fileNames[index]}
+                        </Typography>
+                        <IconButton
+                          onClick={() => handleRemoveFile(index)}
+                          sx={{
+                            color: "red",
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
+              )}
+            </Grid>
+          )}
         </Grid>
       </DialogContent>
       <DialogActions
-        style={{ backgroundColor: colors.primary[400], padding: "10px" }}
+        style={{
+          backgroundColor: colors.primary[400],
+          color: colors.grey[100],
+        }}
       >
         <Button
           onClick={onClose}
-          sx={{
+          style={{
+            backgroundColor: colors.redAccent[500],
             color: colors.grey[100],
-            "&:hover": { backgroundColor: colors.redAccent[700] },
           }}
         >
           Cancelar
         </Button>
         <Button
           onClick={handleSubmit}
-          sx={{
-            backgroundColor: colors.greenAccent[600],
+          style={{
+            backgroundColor: colors.greenAccent[500],
             color: colors.grey[100],
-            "&:hover": { backgroundColor: colors.greenAccent[700] },
           }}
-          variant="contained"
         >
-          Guardar
+          Crear Tarea
         </Button>
       </DialogActions>
     </Dialog>
