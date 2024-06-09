@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import {
   sectorOptions,
-  supportOptions,
+  supportOptionsAdmin,
   modalityOptions,
 } from "../../../../../utils/variables/options";
 import { tokens } from "../../../../../theme";
@@ -385,7 +385,7 @@ const AddInstitutionModal = ({ open, onClose, onSuccess }) => {
               label="Apoyo"
               name="support"
               value={formData.support}
-              options={supportOptions}
+              options={supportOptionsAdmin}
               onChange={handleChange}
               error={isSubmitted && !!errors.support}
               formHelperText={isSubmitted && errors.support}

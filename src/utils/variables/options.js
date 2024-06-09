@@ -4,6 +4,11 @@ export const sectorOptions = [
     { value: "PUBLIC", label: "Publico" },
   ];
   
+  export const supportOptionsAdmin = [
+    { value: "true", label: "SI" },
+    { value: "false", label: "NO" },
+  ];
+
   export const supportOptions = [
     { value: true, label: "SI" },
     { value: false, label: "NO" },

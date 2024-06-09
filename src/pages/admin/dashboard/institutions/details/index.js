@@ -13,7 +13,7 @@ import { Save } from "@mui/icons-material";
 import CustomSelect from "../../../../../components/admin/dashboard/Select/CustomSelect";
 import {
   sectorOptions,
-  supportOptions,
+  supportOptionsAdmin,
   modalityOptions,
   statusOptions,
 } from "../../../../../utils/variables/options";
@@ -70,6 +70,7 @@ const InstitutionDetailPage = () => {
   const handleOpenConfirmDeleteModal = () => {
     setInstitutionToDelete(institution);
     setIsConfirmDeleteModalOpen(true);
+    setSuccessMessage("Intitucion Eliminda");
   };
 
   const handleCloseConfirmDeleteModal = () => {
@@ -310,7 +311,7 @@ const InstitutionDetailPage = () => {
               <CustomSelect
                 label="Apoyo"
                 value={institution.support}
-                options={supportOptions}
+                options={supportOptionsAdmin}
                 readOnly={!isEditing}
                 onChange={(e) =>
                   setInstitution({ ...institution, support: e.target.value })
