@@ -104,7 +104,10 @@ const TasksPage = () => {
       setSuccessMessage(`Error al eliminar la tarea ${taskToDelete.tittle}`);
     }
   };
-  
+
+  const handleViewSubmissions = (taskId) => {
+    navigate(`/admin/dashboard/task/${taskId}/submissions`);
+  };
 
   const actions = [
     {
@@ -113,9 +116,9 @@ const TasksPage = () => {
       onClick: (row) => handleOpenUpdateTaskModal(row),
     },
     {
-      name: "Ver archivos",
+      name: "Ver entregas",
       icon: <AssignmentOutlinedIcon />,
-      onClick: (row) => handleTaskDetails(row.id),
+      onClick: (row) => handleViewSubmissions(row.id),
     },
     {
       name: "Eliminar",

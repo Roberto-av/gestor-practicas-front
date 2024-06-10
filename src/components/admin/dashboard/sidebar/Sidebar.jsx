@@ -146,7 +146,7 @@ const Sidebar = () => {
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >
-              Alumnos
+              Alumnado
             </Typography>
             <Item
               title="Usuarios"
@@ -156,7 +156,7 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
-              title="Todos"
+              title="Alumnos"
               to="/admin/dashboard/students"
               icon={<ContactsOutlinedIcon />}
               selected={selected}

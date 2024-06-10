@@ -58,7 +58,7 @@ const GroupDetailsPage = () => {
 
   const handleTaskDetails = (row) => {
     const taskId = row.id;
-    navigate(`/admin/dashboard/task/${taskId}`);
+    navigate(`/admin/dashboard/task/${taskId}/submissions`);
   };
 
   const actions = [

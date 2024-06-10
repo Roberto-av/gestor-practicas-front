@@ -20,6 +20,7 @@ import TaskDetails from "./pages/student/groups/taskDetails";
 import InstitutionsStudents from "./pages/student/institutions";
 import InstitutionDetailPageStudent from "./pages/student/institutions/details";
 import PrivateRouteSudent from "./components/student/auth/privateRoutes";
+import SubmissionsPage from "./pages/admin/dashboard/tasks/submissions";
 
 const App = () => {
   return (
@@ -33,6 +34,7 @@ const App = () => {
               <Route path="group/:groupId" element={<GroupDetailsPage />} />
               <Route path="tasks" element={<TasksPage />} />
               <Route path="task/:taskId" element={<TaskFiles />} />
+              <Route path="task/:taskId/submissions" element={<SubmissionsPage />} />
               <Route path="institutions" element={<InstitutionsPage />} />
               <Route
                 path="institutions/:id"
