@@ -7,10 +7,12 @@ import Loader from "../../../../components/admin/dashboard/loader";
 import Header from "../../../../components/common/header";
 import CustomButton from "../../../../components/common/buttton";
 import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmDeleteModal from "../../../../components/admin/dashboard/students/delete/ConfirmDeleteModal";
 import AddTaskModal from "../../../../components/admin/dashboard/tasks/add/AddTaskModal";
+import UpdateTaskModal from "../../../../components/admin/dashboard/tasks/update/UpdateTaskModal";
 import { tokens } from "../../../../theme";
 import { useNavigate } from "react-router-dom";
 
@@ -27,6 +29,8 @@ const TasksPage = () => {
     useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+  const [isUpdateTaskModalOpen, setIsUpdateTaskModalOpen] = useState(false);
+  const [taskToUpdate, setTaskToUpdate] = useState(null);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -52,6 +56,15 @@ const TasksPage = () => {
     setTasks((prevTasks) => [...prevTasks, newTask]);
   };
 
+  const handleUpdateTaskSuccess = (message, updatedTask) => {
+    setSuccessMessage(message);
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === updatedTask.id ? updatedTask : task
+      )
+    );
+  };
+
   const handleOpenConfirmDeleteModal = (task) => {
     setTaskToDelete(task);
     setIsConfirmDeleteModalOpen(true);
@@ -62,13 +75,23 @@ const TasksPage = () => {
     setTaskToDelete(null);
   };
 
+  const handleOpenUpdateTaskModal = (task) => {
+    setTaskToUpdate(task);
+    setIsUpdateTaskModalOpen(true);
+  };
+
+  const handleCloseUpdateTaskModal = () => {
+    setIsUpdateTaskModalOpen(false);
+    setTaskToUpdate(null);
+  };
+
   const handleTaskDetails = (taskId) => {
     navigate(`/admin/dashboard/task/${taskId}`);
   };
 
   const handleDeleteTask = async () => {
-    if (!taskToDelete) return;
-
+    if (!taskToDelete || !taskToDelete.id) return;
+  
     try {
       await api.delete(`/api/tasks/delete/${taskToDelete.id}`);
       setTasks((prevTasks) =>
@@ -81,8 +104,14 @@ const TasksPage = () => {
       setSuccessMessage(`Error al eliminar la tarea ${taskToDelete.tittle}`);
     }
   };
+  
 
   const actions = [
+    {
+      name: "Editar",
+      icon: <EditIcon />,
+      onClick: (row) => handleOpenUpdateTaskModal(row),
+    },
     {
       name: "Ver archivos",
       icon: <AssignmentOutlinedIcon />,
@@ -157,6 +186,12 @@ const TasksPage = () => {
             onConfirm={handleDeleteTask}
             customText="la tarea"
             name={taskToDelete?.tittle}
+          />
+          <UpdateTaskModal
+            open={isUpdateTaskModalOpen}
+            onClose={handleCloseUpdateTaskModal}
+            onSuccess={handleUpdateTaskSuccess}
+            task={taskToUpdate}
           />
           {successMessage && (
             <Snackbar
