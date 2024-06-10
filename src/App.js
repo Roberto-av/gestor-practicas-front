@@ -19,6 +19,7 @@ import StudentGroup from "./pages/student/groups";
 import TaskDetails from "./pages/student/groups/taskDetails";
 import InstitutionsStudents from "./pages/student/institutions";
 import InstitutionDetailPageStudent from "./pages/student/institutions/details";
+import PrivateRouteSudent from "./components/student/auth/privateRoutes";
 
 const App = () => {
   return (
@@ -41,12 +42,17 @@ const App = () => {
               <Route path="" element={<Home />} />
             </Route>
           </Route>
-          <Route path="/" element={<StudentLayout />}>
-            <Route path="" element={<HomeStudents />} />
-            <Route path="group" element={<StudentGroup />} />
-            <Route path="group/task/:taskId" element={<TaskDetails />} />
-            <Route path="institutions" element={<InstitutionsStudents />} />
-            <Route path="institution/:institutionId" element={<InstitutionDetailPageStudent />} />
+          <Route element={<PrivateRouteSudent />}>
+            <Route path="/" element={<StudentLayout />}>
+              <Route path="" element={<HomeStudents />} />
+              <Route path="group" element={<StudentGroup />} />
+              <Route path="group/task/:taskId" element={<TaskDetails />} />
+              <Route path="institutions" element={<InstitutionsStudents />} />
+              <Route
+                path="institution/:institutionId"
+                element={<InstitutionDetailPageStudent />}
+              />
+            </Route>
           </Route>
           <Route path="/login" element={<Login />} />
           <Route
