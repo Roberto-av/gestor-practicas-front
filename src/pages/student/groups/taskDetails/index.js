@@ -62,6 +62,23 @@ const TaskDetails = () => {
     fetchSubmission();
   }, [taskId, authState.user.userId]);
 
+  const downloadFile = async (fileId, fileName) => {
+    try {
+      const response = await api.get(`/api/tasks/files/${fileId}/download`, {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    }
+  };
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -78,7 +95,15 @@ const TaskDetails = () => {
     return <Typography>Cargando...</Typography>;
   }
 
-  const { tittle, description, initialDate, endDate, group, statusTask } = task;
+  const {
+    tittle,
+    description,
+    initialDate,
+    endDate,
+    group,
+    statusTask,
+    files,
+  } = task;
 
   const formattedInitialDate =
     initialDate && isValid(parseISO(initialDate))
@@ -174,9 +199,40 @@ const TaskDetails = () => {
             sx={{
               fontSize: { xs: "0.9rem", sm: "0.9rem", md: "1rem" },
             }}
-            mb={10}
+            mb={2}
           >
             {description}
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
+            }}
+            mb={10}
+          >
+            <Box component="span">Archivos Adjuntos:</Box>
+            {files && files.length > 0 ? (
+              files.map((file, index) => (
+                <Box key={index}>
+                  <Typography
+                    component="a"
+                    onClick={() => downloadFile(file.id, file.name)}
+                    sx={{
+                      fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                      "&:hover": {
+                        color: "#1976d2", // Cambia el color al pasar el cursor
+                      },
+                    }}
+                  >
+                    {file.name}
+                  </Typography>
+                </Box>
+              ))
+            ) : (
+              <Box component="span"> -</Box>
+            )}
           </Typography>
           <Typography
             variant="body1"
@@ -258,7 +314,7 @@ const TaskDetails = () => {
                 mb: "15px",
               }}
             >
-          {task.hasSubmitted ? "Actualizar envío" : "Añadir archivos"}
+              {task.hasSubmitted ? "Actualizar envío" : "Añadir archivos"}
             </Button>
           </Box>
           <Typography
@@ -275,13 +331,19 @@ const TaskDetails = () => {
               <Box component="span">
                 {submission.files.map((file, index) => (
                   <Box key={index}>
-                    <a
-                      href={`/${file.filePath}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {file.name}
-                    </a>
+                    <Typography
+                    component="a"
+                    sx={{
+                      fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                      "&:hover": {
+                        color: "#1976d2",
+                      },
+                    }}
+                  >
+                    {file.name}
+                  </Typography>
                   </Box>
                 ))}
               </Box>
