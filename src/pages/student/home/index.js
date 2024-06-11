@@ -86,7 +86,7 @@ const HomeStudents = () => {
         <Loader />
         </Box>
       ) : (
-        <Box width="99%" boxShadow={2}>
+        <Box width="99%" boxShadow={2} pb={2}>
           <Box
             display="flex"
             justifyContent="center"
@@ -110,7 +110,8 @@ const HomeStudents = () => {
             mt={2}
             bgcolor="#DCDFE4"
             boxShadow={3}
-            minHeight="500px"
+            minHeight="400px"
+            mb={10}
           >
             <Box width="100%" textAlign="left">
               <Typography
@@ -134,7 +135,6 @@ const HomeStudents = () => {
               )}
             </Box>
           </Box>
-          <p>ss</p>
         </Box>
       )}
     </>
