@@ -85,9 +85,6 @@ const TasksPage = () => {
     setTaskToUpdate(null);
   };
 
-  const handleTaskDetails = (taskId) => {
-    navigate(`/admin/dashboard/task/${taskId}`);
-  };
 
   const handleDeleteTask = async () => {
     if (!taskToDelete || !taskToDelete.id) return;

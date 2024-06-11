@@ -1,5 +1,3 @@
-// HomeStudents.jsx
-
 import { useContext, useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import Widgets from "./widgets";
@@ -11,7 +9,6 @@ import { AuthContext } from "../../../context/AuthContext";
 const HomeStudents = () => {
   const { authState } = useContext(AuthContext);
   const [tasks, setTasks] = useState([]);
-  const [studentGroup, setStudentGroup] = useState(null);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(true); // Estado de carga
@@ -19,71 +16,72 @@ const HomeStudents = () => {
   useEffect(() => {
     setIsLoading(true); // Iniciar carga al comenzar la consulta
 
-    // Fetch student info and tasks from the API endpoint
-    if (authState.user) {
-      const studentId = authState.user.userId;
-      api
-        .get(`/api/users/${studentId}`)
-        .then((response) => {
+    // Fetch student info from the API endpoint
+    const fetchStudentInfo = async () => {
+      try {
+        if (authState.user) {
+          const studentId = authState.user.userId;
+          const response = await api.get(`/api/users/${studentId}`);
           console.log("data", response.data);
           const studentData = response.data;
           if (studentData.student && studentData.student.group) {
             console.log("studentData", studentData.student.group);
             const groupId = studentData.student.group.id;
-            setStudentGroup(studentData.student.group);
             // Fetch tasks for the group
-            console.log("grupo del estudiante", studentGroup);
-            api
-              .get(`/api/groups/${groupId}`)
-              .then((taskResponse) => {
-                const allTasks = taskResponse.data.tasks;
-                const enabledTasks = allTasks.filter(
-                  (task) => task.statusTask === "ENABLE"
-                );
-                setTasks(enabledTasks);
-                console.log("Tareas", enabledTasks);
-
-                if (enabledTasks.length === 0) {
-                  setMessage("No hay tareas activas en este momento.");
-                } else {
-                  setMessage(null);
-                }
-
-                setIsLoading(false);
-              })
-              .catch((taskError) => {
-                console.error("Error fetching tasks:", taskError);
-                setError("Error fetching tasks.");
-                setIsLoading(false);
-              });
+            fetchTasks(groupId);
           } else {
             setMessage("No hay un grupo asociado");
             setIsLoading(false);
           }
-        })
-        .catch((error) => {
-          console.error("Error fetching student data:", error);
-          setError("Error al obtener la información del estudiante");
-          setIsLoading(false);
-        });
-    }
+        }
+      } catch (error) {
+        console.error("Error fetching student data:", error);
+        setError("Error al obtener la información del estudiante");
+        setIsLoading(false);
+      }
+    };
+
+    // Fetch tasks from the API endpoint
+    const fetchTasks = async (groupId) => {
+      try {
+        const taskResponse = await api.get(`/api/groups/${groupId}`);
+        const allTasks = taskResponse.data.tasks;
+        const enabledTasks = allTasks.filter((task) => task.statusTask === "ENABLE");
+        setTasks(enabledTasks);
+        console.log("Tareas", enabledTasks);
+
+        if (enabledTasks.length === 0) {
+          setMessage("No hay tareas activas en este momento.");
+        } else {
+          setMessage(null);
+        }
+
+        setIsLoading(false);
+      } catch (taskError) {
+        console.error("Error fetching tasks:", taskError);
+        setError("Error fetching tasks.");
+        setIsLoading(false);
+      }
+    };
+
+    fetchStudentInfo();
   }, [authState]);
 
   return (
     <>
       {isLoading ? (
         <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        width="100%"
-        height="70vh"
-        margin="auto"
-        borderRadius="16px"
-        p={2}
-        mt={2}
-      >
-        <Loader />
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          width="100%"
+          height="70vh"
+          margin="auto"
+          borderRadius="16px"
+          p={2}
+          mt={2}
+        >
+          <Loader />
         </Box>
       ) : (
         <Box width="99%" boxShadow={2} pb={2}>

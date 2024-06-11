@@ -234,10 +234,6 @@ const UpdateTaskModal = ({ open, onClose, task, onSuccess }) => {
     }
   };
 
-  const toggleDropzone = () => {
-    setShowDropzone((prevShowDropzone) => !prevShowDropzone);
-  };
-
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle

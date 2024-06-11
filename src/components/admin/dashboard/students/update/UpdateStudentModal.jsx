@@ -108,6 +108,7 @@ const UpdateStudentModal = ({ open, onClose, onSuccess, student }) => {
   };
 
   const handleSubmit = async () => {
+    console.log(validate);
     setIsSubmitted(true);
     setLoading(true);
     try {

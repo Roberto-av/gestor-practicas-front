@@ -58,6 +58,7 @@ const InviteStudentModal = ({ open, onClose, groupId, onSuccess }) => {
         emails: selectedStudents.map((student) => student.email),
         groupId: groupId,
       });
+      console.log("Invite response:", response);
       onSuccess(`Estudiantes invitados con éxito al grupo ${groupId}`);
       onClose();
     } catch (error) {
