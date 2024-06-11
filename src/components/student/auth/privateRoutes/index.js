@@ -18,7 +18,7 @@ const PrivateRouteSudent = () => {
       } else {
         setLoading(false);
       }
-    }, 1000);
+    }, 2000);
 
     return () => clearTimeout(timer); 
   }, [token, logout, navigate]);
