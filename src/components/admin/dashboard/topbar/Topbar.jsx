@@ -1,6 +1,6 @@
 import { Box, IconButton, useTheme, Menu, MenuItem } from "@mui/material";
 import { useContext, useState } from "react";
-import { ColorModeContext, tokens } from "../../../../theme";
+import { ColorModeContext } from "../../../../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
@@ -13,7 +13,6 @@ import { Link } from "react-router-dom";
 
 const Topbar = () => {
   const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
   const { logout } = useContext(AuthContext);
 

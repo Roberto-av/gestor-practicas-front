@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Snackbar, useTheme, Grid, Typography } from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Header from "../../../../../components/common/header";
 import Loader from "../../../../../components/admin/dashboard/loader";
 import Table from "../../../../../components/admin/dashboard/table";
@@ -14,7 +14,6 @@ import { tokens } from "../../../../../theme";
 const TaskFiles = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const navigate = useNavigate();
   const { taskId } = useParams();
   const [loading, setLoading] = useState(true);
   const [task, setTask] = useState(null);

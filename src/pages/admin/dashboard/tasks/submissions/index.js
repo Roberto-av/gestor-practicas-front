@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Box, Snackbar, useTheme } from "@mui/material";
+import { Box, Snackbar } from "@mui/material";
 import { useParams } from "react-router-dom";
 import api from "../../../../../utils/api";
 import Loader from "../../../../../components/admin/dashboard/loader";
 import Header from "../../../../../components/common/header";
 import Table from "../../../../../components/admin/dashboard/table";
-import { tokens } from "../../../../../theme";
 import DateFormatter from "../../../../../components/common/dateFormat";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import FileDownloadModal from "../../../../../components/admin/dashboard/tasks/submissions/download";
 
 const SubmissionsPage = () => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
   const { taskId } = useParams();
   const title = "Entregas";
   const subtitle = `Ver entregas de la tarea ${taskId}`;
