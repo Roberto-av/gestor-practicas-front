@@ -9,7 +9,7 @@ import AddIcon from "@mui/icons-material/Add";
 import AddStudentModal from "../../../../components/admin/dashboard/students/AddStudentModal";
 import UpdateStudentModal from "../../../../components/admin/dashboard/students/update";
 import ConfirmDeleteModal from "../../../../components/admin/dashboard/students/delete/ConfirmDeleteModal";
-import { Snackbar, Box, useTheme } from "@mui/material";
+import { Snackbar, Box, useTheme, TextField } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
 import { tokens } from "../../../../theme";
@@ -21,6 +21,8 @@ const Students = () => {
   const subtitle = "Gestionar a los estudiantes";
   const [loading, setLoading] = useState(true);
   const [students, setStudents] = useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] =
@@ -34,12 +36,12 @@ const Students = () => {
     const fetchStudents = async () => {
       try {
         const response = await api.get("/api/students/get-all");
-        setStudents(response.data);
         const studentsWithGroupName = response.data.map(student => ({
           ...student,
           groupName: student.group ? student.group.name : ''
         }));
         setStudents(studentsWithGroupName);
+        setFilteredStudents(studentsWithGroupName);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching students:", error);
@@ -48,6 +50,15 @@ const Students = () => {
 
     fetchStudents();
   }, []);
+
+  useEffect(() => {
+    const filtered = students.filter((student) =>
+      student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.controlNumber.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredStudents(filtered);
+  }, [searchTerm, students]);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -157,9 +168,9 @@ const Students = () => {
 
   const columns = [
     { field: "id", headerName: "ID" },
-    { field: "controlNumber", headerName: "Numero de control", flex: 1 },
-    { field: "name", headerName: "Nombre", flex: 1 },
-    { field: "email", headerName: "Email", flex: 1 },
+    { field: "controlNumber", headerName: "Número de control", flex: 1 },
+    { field: "name", headerName: "Nombre", flex: 1, minWidth: 250 },
+    { field: "email", headerName: "Email", flex: 1, minWidth: 250 },
     { field: "program", headerName: "Carrera", flex: 1 },
     { field: "semester", headerName: "Semestre" },
     { field: "shift", headerName: "Turno" },
@@ -168,12 +179,14 @@ const Students = () => {
       field: "createdAt",
       headerName: "Fecha de creación",
       flex: 1,
+      minWidth: 150,
       renderCell: (params) => <DateFormatter dateString={params.value} />,
     },
     {
       field: "updatedAt",
-      headerName: "Fecha de ultima act",
+      headerName: "Fecha de última actualización",
       flex: 1,
+      minWidth: 150,
       renderCell: (params) => <DateFormatter dateString={params.value} />,
     },
   ];
@@ -193,11 +206,10 @@ const Students = () => {
         <>
           <Header title={title} subtitle={subtitle} />
           <Box
-            mb="30px"
-            m="20px"
             display="flex"
             flexDirection="row"
-            justifyContent="flex-end"
+            justifyContent="end"
+            alignItems="center"
             p={2}
           >
             <CustomButton
@@ -208,7 +220,22 @@ const Students = () => {
               hoverColor={colors.greenAccent[700]}
             />
           </Box>
-          <Table rows={students} columns={columns} actions={actions} />
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="end"
+            alignItems="center"
+            p={2}
+          >
+          <TextField
+              label="Buscar"
+              variant="filled"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              sx={{ width: 300 }}
+            />
+          </Box>
+          <Table rows={filteredStudents} columns={columns} actions={actions} />
           <AddStudentModal
             open={isModalOpen}
             onClose={handleCloseModal}

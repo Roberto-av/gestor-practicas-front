@@ -25,16 +25,28 @@ const Table = ({ rows, columns, actions }) => {
     handleMenuClose();
   };
 
+  // Desactivar filtrado y ordenación en las columnas
+  const updatedColumns = columns.map(column => ({
+    ...column,
+    filterable: false,
+    sortable: false,
+    flex: 1, // Permitir que la columna tome el espacio necesario
+  }));
+
   return (
     <Box m="20px">
       <Box
         height="65vh"
         sx={{
+          overflowX: 'auto',
           "& .MuiDataGrid-root": {
             border: "none",
           },
           "& .MuiDataGrid-cell": {
             borderBottom: "none",
+            whiteSpace: 'nowrap', // Prevenir que el texto se corte en varias líneas
+            overflow: 'visible', // Asegurarse de que el contenido no se oculte
+            textOverflow: 'clip', // Evitar que el texto se trunque con '...'
           },
           "& .name-column--cell": {
             color: colors.greenAccent[300],
@@ -55,7 +67,7 @@ const Table = ({ rows, columns, actions }) => {
         <DataGrid
           rows={rows}
           columns={[
-            ...columns,
+            ...updatedColumns,
             {
               field: "acciones",
               headerName: "Acciones",
